@@ -1,0 +1,717 @@
+openapi: 3.0.3
+info:
+  title: Refina Analytics API
+  description: |
+    Analytics service for financial data aggregation and reporting.
+    
+    ## Standard Response Format
+    
+    All API responses follow a standardized format:
+    
+    ```json
+    {
+      "status": true/false,      // true for success, false for error
+      "statusCode": 200,          // HTTP status code
+      "message": "Description",   // Human-readable message
+      "data": { ... }            // Optional: actual response data (only in success)
+    }
+    ```
+    
+    **Success Response Example:**
+    ```json
+    {
+      "status": true,
+      "statusCode": 200,
+      "message": "Data retrieved successfully",
+      "data": {
+        // ... actual data here
+      }
+    }
+    ```
+    
+    **Error Response Example:**
+    ```json
+    {
+      "status": false,
+      "statusCode": 400,
+      "message": "Validation failed: userID is required"
+    }
+    ```
+    
+    ## Features
+    
+    This API provides comprehensive financial analytics including:
+    - Transaction summaries by category
+    - Balance tracking over time
+    - Financial health metrics and summaries
+    - Net worth composition analysis
+    
+    ## Authentication
+    
+    All endpoints (except `/test` and `/analytics/initial-sync`) require Bearer token authentication.
+    
+    Include the JWT token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+    ## Rate Limiting
+    - Standard requests: 100 requests per minute
+    - Initial sync: 1 request per hour
+    
+    ## Date Formats
+    All dates use ISO 8601 format: `YYYY-MM-DDTHH:mm:ss.sssZ`
+    
+  version: 2.0.0
+  contact:
+    name: API Support
+    email: support@refina.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8012
+    description: Local development server
+  - url: https://api-staging.refina.com
+    description: Staging server
+  - url: https://api.refina.com
+    description: Production server
+
+tags:
+  - name: Health Check
+    description: Server health and status endpoints
+  - name: Analytics
+    description: Financial analytics and reporting endpoints
+  - name: Sync
+    description: Data synchronization endpoints
+
+paths:
+  /test:
+    get:
+      tags:
+        - Health Check
+      summary: Health check endpoint
+      description: Simple endpoint to verify server is running
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                status: true
+                statusCode: 200
+                message: "Server is healthy"
+
+  /analytics/initial-sync:
+    post:
+      tags:
+        - Sync
+      summary: Initial data synchronization
+      description: |
+        Synchronizes all data from read model (gRPC services) to analytics database.
+        
+        **⚠️ Important Notes:**
+        - This endpoint requires a secret key for authentication
+        - Can take 10-30 seconds to complete for large datasets
+        - Should only be run during low-traffic periods
+        - Running multiple times will recalculate all metrics
+        
+        **What it does:**
+        1. Fetches all wallets, transactions, and investments from gRPC services
+        2. Processes and aggregates data into 4 analytical schemas
+        3. Calculates financial metrics and summaries
+        4. Updates MongoDB collections with latest data
+        
+        See documentation for detailed impact analysis of running this multiple times.
+      operationId: initialSync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - secretKey
+              properties:
+                secretKey:
+                  type: string
+                  description: Secret key for authenticating sync requests
+                  example: your-secret-key-here
+      responses:
+        '200':
+          description: Sync completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          stats:
+                            type: object
+                            properties:
+                              transactions:
+                                type: integer
+                                example: 1234
+                              balances:
+                                type: integer
+                                example: 567
+                              summaries:
+                                type: integer
+                                example: 89
+                              compositions:
+                                type: integer
+                                example: 12
+              example:
+                status: true
+                statusCode: 200
+                message: "Initial sync completed successfully"
+                data:
+                  stats:
+                    transactions: 1234
+                    balances: 567
+                    summaries: 89
+                    compositions: 12
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /analytics/user-transactions:
+    post:
+      tags:
+        - Analytics
+      summary: Get user transactions by category
+      description: |
+        Retrieves aggregated transaction data grouped by category.
+        
+        **Filtering Options:**
+        - By specific wallet or all wallets
+        - By exact date, date range, year, month, or all time
+        - Results sorted by total amount (descending)
+        
+        **Use Cases:**
+        - "Show me my spending by category for February 2026"
+        - "What was my total Food & Beverage expense last week?"
+      operationId: getUserTransactions
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserTransactionRequest'
+            examples:
+              specificMonth:
+                summary: Specific month - Specific wallet
+                value:
+                  userID: "a79a39e5-d70f-41ae-b7e6-36246a99172d"
+                  walletID: "ce4b1003-5556-4b9e-8ed0-574417977c54"
+                  dateOption:
+                    year: 2026
+                    month: 2
+      responses:
+        '200':
+          description: Transaction data retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TransactionCategoryAggregate'
+              example:
+                status: true
+                statusCode: 200
+                message: "User transactions retrieved successfully"
+                data:
+                  - CategoryID: "e6a3af62-02ca-4d6e-b786-583d4438e5ea"
+                    CategoryName: "Food & Beverage"
+                    CategoryType: "expense"
+                    TotalAmount: 4500000
+                    TotalTransactions: 30
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /analytics/user-balance:
+    post:
+      tags:
+        - Analytics
+      summary: Get user balance snapshots
+      description: |
+        Retrieves balance snapshots aggregated by daily, weekly, or monthly periods.
+        
+        **Aggregation Types:**
+        - `daily`: Raw daily balance snapshots
+        - `weekly`: Weekly aggregation
+        - `monthly`: Monthly aggregation
+      operationId: getUserBalance
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserBalanceRequest'
+      responses:
+        '200':
+          description: Balance data retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        oneOf:
+                          - type: array
+                            items:
+                              $ref: '#/components/schemas/DailyBalance'
+                          - type: array
+                            items:
+                              $ref: '#/components/schemas/MonthlyBalance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /analytics/user-financial-summary:
+    post:
+      tags:
+        - Analytics
+      summary: Get comprehensive financial summary
+      description: Retrieves comprehensive financial summaries with all key metrics
+      operationId: getUserFinancialSummary
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserFinancialSummaryRequest'
+      responses:
+        '200':
+          description: Financial summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FinancialSummary'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /analytics/user-net-worth-composition:
+    post:
+      tags:
+        - Analytics
+      summary: Get net worth composition
+      description: Retrieves net worth composition showing asset allocation
+      operationId: getUserNetWorthComposition
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserNetWorthCompositionRequest'
+      responses:
+        '200':
+          description: Net worth composition retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/NetWorthComposition'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token containing user claims (email, id, username)
+
+  schemas:
+    # Base Response Schemas
+    SuccessResponse:
+      type: object
+      required:
+        - status
+        - statusCode
+        - message
+      properties:
+        status:
+          type: boolean
+          example: true
+          description: Always true for successful responses
+        statusCode:
+          type: integer
+          example: 200
+          description: HTTP status code
+        message:
+          type: string
+          example: "Operation completed successfully"
+          description: Human-readable success message
+        data:
+          description: Optional response data (structure varies by endpoint)
+          
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - statusCode
+        - message
+      properties:
+        status:
+          type: boolean
+          example: false
+          description: Always false for error responses
+        statusCode:
+          type: integer
+          example: 400
+          description: HTTP status code
+        message:
+          type: string
+          example: "Validation failed"
+          description: Human-readable error message
+
+    # Request Schemas
+    GetUserTransactionRequest:
+      type: object
+      required:
+        - userID
+        - dateOption
+      properties:
+        userID:
+          type: string
+          format: uuid
+        walletID:
+          type: string
+          format: uuid
+        dateOption:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date-time
+            range:
+              type: object
+              properties:
+                start:
+                  type: string
+                  format: date-time
+                end:
+                  type: string
+                  format: date-time
+            year:
+              type: integer
+            month:
+              type: integer
+            day:
+              type: integer
+
+    GetUserBalanceRequest:
+      type: object
+      required:
+        - userID
+        - aggregation
+      properties:
+        userID:
+          type: string
+          format: uuid
+        walletID:
+          type: string
+          format: uuid
+        aggregation:
+          type: string
+          enum: [daily, weekly, monthly]
+        range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date-time
+            end:
+              type: string
+              format: date-time
+
+    GetUserFinancialSummaryRequest:
+      type: object
+      required:
+        - userID
+      properties:
+        userID:
+          type: string
+          format: uuid
+        walletID:
+          type: string
+          format: uuid
+        range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date-time
+            end:
+              type: string
+              format: date-time
+
+    GetUserNetWorthCompositionRequest:
+      type: object
+      required:
+        - userID
+      properties:
+        userID:
+          type: string
+          format: uuid
+
+    # Data Schemas
+    TransactionCategoryAggregate:
+      type: object
+      properties:
+        CategoryID:
+          type: string
+          format: uuid
+        CategoryName:
+          type: string
+        CategoryType:
+          type: string
+          enum: [income, expense]
+        TotalAmount:
+          type: number
+          format: double
+        TotalTransactions:
+          type: integer
+
+    DailyBalance:
+      type: object
+      properties:
+        WalletID:
+          type: string
+          format: uuid
+        WalletName:
+          type: string
+        Date:
+          type: string
+          format: date-time
+        Year:
+          type: integer
+        Month:
+          type: integer
+        Day:
+          type: integer
+        OpeningBalance:
+          type: number
+          format: double
+        ClosingBalance:
+          type: number
+          format: double
+        TotalIncome:
+          type: number
+          format: double
+        TotalExpense:
+          type: number
+          format: double
+        NetChange:
+          type: number
+          format: double
+        TransactionCount:
+          type: integer
+
+    MonthlyBalance:
+      type: object
+      properties:
+        Year:
+          type: integer
+        Month:
+          type: integer
+        WalletID:
+          type: string
+          format: uuid
+        WalletName:
+          type: string
+        OpeningBalance:
+          type: number
+          format: double
+        ClosingBalance:
+          type: number
+          format: double
+        TotalIncome:
+          type: number
+          format: double
+        TotalExpense:
+          type: number
+          format: double
+        NetChange:
+          type: number
+          format: double
+        TotalTransactions:
+          type: integer
+
+    FinancialSummary:
+      type: object
+      properties:
+        UserID:
+          type: string
+          format: uuid
+        PeriodType:
+          type: string
+        PeriodKey:
+          type: string
+        IncomeNow:
+          type: number
+        ExpenseNow:
+          type: number
+        ProfitNow:
+          type: number
+        SavingsRate:
+          type: number
+        RunwayDays:
+          type: integer
+
+    NetWorthComposition:
+      type: object
+      properties:
+        UserID:
+          type: string
+          format: uuid
+        Total:
+          type: number
+        Slices:
+          type: array
+          items:
+            type: object
+            properties:
+              Label:
+                type: string
+              Amount:
+                type: number
+              Percentage:
+                type: number
+
+  responses:
+    ValidationError:
+      description: Validation error - Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            missingField:
+              summary: Missing required field
+              value:
+                status: false
+                statusCode: 400
+                message: "userID is required"
+            invalidEnum:
+              summary: Invalid enum value
+              value:
+                status: false
+                statusCode: 400
+                message: "aggregation must be one of: daily, weekly, monthly"
+
+    UnauthorizedError:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            noToken:
+              summary: No token provided
+              value:
+                status: false
+                statusCode: 401
+                message: "Authentication token is required"
+            invalidToken:
+              summary: Invalid or expired token
+              value:
+                status: false
+                statusCode: 401
+                message: "Invalid or expired token"
+
+    ForbiddenError:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            statusCode: 403
+            message: "Invalid secret key"
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            statusCode: 404
+            message: "No net worth data found for user"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            generic:
+              summary: Generic server error
+              value:
+                status: false
+                statusCode: 500
+                message: "Internal server error"
+            database:
+              summary: Database error
+              value:
+                status: false
+                statusCode: 500
+                message: "Database connection failed"

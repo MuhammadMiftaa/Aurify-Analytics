@@ -9,11 +9,11 @@ import {
   walletType,
 } from "./dto";
 import service from "./service";
-import helper from "./helper";
+import { successResponse } from "./response";
 import env from "./env";
-import { ForbiddenError } from "./errors";
-import { initialSync } from "./initial-sync";
+import { ForbiddenError, NotFoundError } from "./errors";
 import logger from "./logger";
+import { initialSync } from "./initial-sync";
 
 const getUserTransaction = async (
   req: Request,
@@ -22,8 +22,17 @@ const getUserTransaction = async (
 ) => {
   try {
     const data: getUserTransactionType = req.body;
-    const userTransaction = await service.getUserTransaction(data);
-    res.json(userTransaction);
+    const result = await service.getUserTransaction(data);
+
+    res
+      .status(200)
+      .json(
+        successResponse(
+          200,
+          "User transactions retrieved successfully",
+          result,
+        ),
+      );
   } catch (error) {
     next(error);
   }
@@ -36,8 +45,13 @@ const getUserBalance = async (
 ) => {
   try {
     const data: getUserBalanceType = req.body;
-    const userBalance = await service.getUserBalance(data);
-    res.json(userBalance);
+    const result = await service.getUserBalance(data);
+
+    res
+      .status(200)
+      .json(
+        successResponse(200, "User balance retrieved successfully", result),
+      );
   } catch (error) {
     next(error);
   }
@@ -50,8 +64,17 @@ const getUserFinancialSummary = async (
 ) => {
   try {
     const data: getUserFinancialSummaryType = req.body;
-    const userFinancialSummary = await service.getUserFinancialSummary(data);
-    res.json(userFinancialSummary);
+    const result = await service.getUserFinancialSummary(data);
+
+    res
+      .status(200)
+      .json(
+        successResponse(
+          200,
+          "User financial summary retrieved successfully",
+          result,
+        ),
+      );
   } catch (error) {
     next(error);
   }
@@ -64,9 +87,21 @@ const getUserNetWorthComposition = async (
 ) => {
   try {
     const data: getUserNetWorthCompositionType = req.body;
-    const userNetWorthComposition =
-      await service.getUserNetWorthComposition(data);
-    res.json(userNetWorthComposition);
+    const result = await service.getUserNetWorthComposition(data);
+
+    if (!result) {
+      throw new NotFoundError("No net worth data found for user");
+    }
+
+    res
+      .status(200)
+      .json(
+        successResponse(
+          200,
+          "User net worth composition retrieved successfully",
+          result,
+        ),
+      );
   } catch (error) {
     next(error);
   }
@@ -83,6 +118,9 @@ const initialSyncHandler = async (
       throw new ForbiddenError("Invalid secret key");
     }
 
+    logger.info("Starting initial sync - fetching data from gRPC services...");
+
+    // Fetch data from gRPC services
     const wallets =
       (await req.app.locals.walletGRPCClient.getWallets()) as walletType[];
     const transactions =
@@ -90,16 +128,18 @@ const initialSyncHandler = async (
     const investments =
       (await req.app.locals.investmentGRPCClient.getInvestments()) as investmentType[];
 
-    logger.info("Fetch data for initial sync successfully");
-    await initialSync(wallets, transactions, investments);
-    logger.info("Initial sync completed successfully");
+    logger.info(
+      `Fetched data: ${wallets.length} wallets, ${transactions.length} transactions, ${investments.length} investments`,
+    );
 
-    res.json({
-      status: true,
-      statusCode: 200,
-      message: "Initial sync completed successfully",
-    });
+    // Process and sync data to MongoDB
+    const result = await initialSync(wallets, transactions, investments);
+
+    res
+      .status(200)
+      .json(successResponse(200, "Initial sync completed successfully"));
   } catch (error) {
+    logger.error("Initial sync failed:", error);
     next(error);
   }
 };

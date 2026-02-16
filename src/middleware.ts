@@ -4,6 +4,7 @@ import { UnauthorizedError, ValidationError } from "./errors";
 import { ERROR_MESSAGES } from "./constant";
 import { ZodType } from "zod";
 import helper from "./helper";
+import { errorResponse } from "./response";
 
 //$ Authentication middleware
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -80,24 +81,22 @@ const errorHandler = (
     });
   }
 
-  // Determine status code
   const statusCode = err.statusCode || 500;
 
-  // Send error response
-  res.status(statusCode).json({
-    statusCode: statusCode,
-    message: err.isOperational
-      ? err.message
-      : ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
-  });
+  const message = err.isOperational
+    ? err.message
+    : ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
+
+  res.status(statusCode).json(errorResponse(statusCode, message));
 };
 
 //$ 404 Not Found handler
 const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   logger.warn("Route not found", { path: req.path, method: req.method });
-  res.status(404).json({
-    error: "Route not found",
-  });
+
+  res
+    .status(404)
+    .json(errorResponse(404, `Route not found: ${req.method} ${req.path}`));
 };
 
 //$ Request logging middleware
@@ -126,10 +125,40 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+const responseInterceptor = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const originalJson = res.json;
+
+  res.json = function (body) {
+    logger.http("Response sent", {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      message: body.message || "Success",
+      data: body.data,
+    });
+
+    const wrapped = {
+      status: true,
+      statusCode: res.statusCode,
+      message: body.message || "Success",
+      data: body.data,
+    };
+
+    return originalJson.call(this, wrapped);
+  };
+
+  next();
+};
+
 export default {
   authMiddleware,
   validate,
   errorHandler,
   notFoundHandler,
   requestLogger,
+  responseInterceptor,
 };

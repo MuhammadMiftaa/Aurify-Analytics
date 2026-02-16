@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import env from "./env";
+import { UnauthorizedError, ValidationError } from "./errors";
 
 //$ Interface for JWT payload structure
 interface JwtPayload {
@@ -30,7 +31,7 @@ const extractAndVerifyJwtClaims = (token: string): JwtPayload => {
       username: decoded.username,
     };
   } catch (error) {
-    throw new Error(`Failed to verify JWT: ${error}`);
+    throw new UnauthorizedError(`Failed to verify JWT: ${error}`);
   }
 };
 

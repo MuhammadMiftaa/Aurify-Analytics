@@ -1,4 +1,3 @@
-// Import env first to validate all environment variables at startup
 import env from "./env";
 import express, { Request, Response } from "express";
 import logger from "./logger";
@@ -10,6 +9,7 @@ import { GRPCClient } from "./grpc/client/client";
 import { WalletGRPCClient } from "./grpc/client/wallet";
 import { TransactionGRPCClient } from "./grpc/client/transaction";
 import { InvestmentGRPCClient } from "./grpc/client/investment";
+import setupSwagger from "./swagger";
 
 connect(env.DATABASE_URL)
   .then(() => {
@@ -29,7 +29,10 @@ app.locals.investmentGRPCClient = new InvestmentGRPCClient(grpcClient);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(middleware.responseInterceptor);
 app.use(middleware.requestLogger);
+
+setupSwagger(app);
 
 app.get("/test", (req: Request, res: Response) => {
   res.json({ message: "Hello World" });

@@ -10,6 +10,8 @@ import { WalletGRPCClient } from "./grpc/client/wallet";
 import { TransactionGRPCClient } from "./grpc/client/transaction";
 import { InvestmentGRPCClient } from "./grpc/client/investment";
 import setupSwagger from "./swagger";
+import { startConsumer } from "./consumer";
+import { closeConnection } from "./queue";
 
 connect(env.DATABASE_URL)
   .then(() => {
@@ -44,6 +46,18 @@ app.use("/analytics", route);
 
 app.use(middleware.notFoundHandler);
 app.use(middleware.errorHandler);
+
+startConsumer()
+
+const shutdown = async (signal: string) => {
+  logger.info(`${signal} received, shutting down gracefully...`);
+  await closeConnection();
+  logger.info("RabbitMQ connection closed");
+  process.exit(0);
+};
+
+process.on("SIGINT",  () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 app.listen(env.PORT, () => {
   logger.info(`Server started on port ${env.PORT}`);

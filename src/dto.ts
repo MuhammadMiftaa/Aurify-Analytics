@@ -152,10 +152,10 @@ export const investmentSchema = z.object({
 export type getUserTransactionType = z.infer<typeof getUserTransactionSchema>;
 export type getUserBalanceType = z.infer<typeof getUserBalanceSchema>;
 export type getUserFinancialSummaryType = z.infer<
-  typeof getUserFinancialSummarySchema
+typeof getUserFinancialSummarySchema
 >;
 export type getUserNetWorthCompositionType = z.infer<
-  typeof getUserNetWorthCompositionSchema
+typeof getUserNetWorthCompositionSchema
 >;
 export type initialSyncType = z.infer<typeof initialSyncSchema>;
 export type month = z.infer<typeof monthSchema>;
@@ -163,3 +163,5 @@ export type day = z.infer<typeof daySchema>;
 export type walletType = z.infer<typeof walletSchema>;
 export type transactionType = z.infer<typeof transactionSchema>;
 export type investmentType = z.infer<typeof investmentSchema>;
+
+export type EventHandler = (routingKey: string, payload: unknown) => void;

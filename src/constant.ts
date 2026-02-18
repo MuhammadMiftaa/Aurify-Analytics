@@ -8,7 +8,6 @@ export const ERROR_MESSAGES = {
 };
 
 export const EXCHANGE_NAME = "refina_microservice";
-export const EXCHANGE_TYPE = "topic";
 export const QUEUE_NAME = "refina-analytics";
 export const ROUTING_KEYS = [
   "wallet.*", //? wallet.created, wallet.updated, wallet.deleted

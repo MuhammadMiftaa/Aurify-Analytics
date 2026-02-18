@@ -2,47 +2,140 @@ import type { ConsumeMessage, Channel } from "amqplib";
 import type { ChannelWrapper } from "amqp-connection-manager";
 import logger from "./logger";
 import { getConnection } from "./queue";
-import { EventHandler } from "./dto";
 import {
-  EXCHANGE_NAME,
-  EXCHANGE_TYPE,
-  QUEUE_NAME,
-  ROUTING_KEYS,
-} from "./constant";
+  EventHandler,
+  investmentType,
+  transactionSchema,
+  transactionType,
+  walletType,
+} from "./dto";
+import { EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS } from "./constant";
+import { userTransactionModel, userWalletModel } from "./model";
+import helper from "./helper";
 
 //$ Wallet Handlers
-const handleWalletCreated: EventHandler = (routingKey, payload) => {
+const handleWalletCreated: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Wallet created", { routingKey, payload });
+  const wallet = payload as walletType;
 };
 
-const handleWalletUpdated: EventHandler = (routingKey, payload) => {
+const handleWalletUpdated: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Wallet updated", { routingKey, payload });
+  const wallet = payload as walletType;
 };
 
-const handleWalletDeleted: EventHandler = (routingKey, payload) => {
+const handleWalletDeleted: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Wallet deleted", { routingKey, payload });
+  const wallet = payload as walletType;
 };
 
 //$ Transaction Handlers
-const handleTransactionCreated: EventHandler = (routingKey, payload) => {
-  logger.info("Transaction created", { routingKey, payload });
+const handleTransactionCreated: EventHandler = async (
+  routingKey: string,
+  payload: unknown,
+) => {
+  try {
+    const transaction = helper.validate<transactionType>(
+      transactionSchema,
+      payload,
+    );
+
+    const wallet = await userWalletModel.findOne({
+      WalletID: transaction.wallet_id,
+    });
+
+    const userTransactionFilter = {
+      UserID: wallet?.UserID,
+      WalletID: transaction.wallet_id,
+      CategoryID: transaction.category_id,
+      Date: transaction.transaction_date,
+    };
+    const userTransactionUpdate = {
+      $inc: {
+        TotalAmount: transaction.amount,
+        TransactionCount: 1,
+      },
+      $push: {
+        Transactions: {
+          ID: transaction.id,
+          Description: transaction.description,
+          Date: transaction.transaction_date,
+        },
+      },
+      $set: {
+        WalletName: wallet?.WalletName,
+        WalletType: wallet?.WalletType,
+        CategoryName: transaction.category_name,
+        CategoryType: transaction.category_type,
+        Date: transaction.transaction_date,
+        Year: transaction.transaction_date.getFullYear(),
+        Month: transaction.transaction_date.getMonth() + 1,
+        Week: helper.getWeekNumber(transaction.transaction_date),
+        Day: transaction.transaction_date.getDate(),
+        UpdatedAt: new Date(),
+      },
+      $setOnInsert: {
+        UserID: wallet?.UserID,
+        WalletID: transaction.wallet_id,
+        CategoryID: transaction.category_id,
+        CreatedAt: new Date(),
+      },
+    };
+    const userTransactionOption = { upsert: true };
+
+    await userTransactionModel.updateOne(userTransactionFilter, userTransactionUpdate, userTransactionOption);
+
+    const userBalanceFilter = {
+      WalletID: transaction.wallet_id,
+      Date: transaction.transaction_date,
+    };
+
+    logger.info("Transaction created/updated");
+  } catch (error) {
+    logger.error("Failed to handle transaction created", { error });
+  }
 };
 
-const handleTransactionUpdated: EventHandler = (routingKey, payload) => {
+const handleTransactionUpdated: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Transaction updated", { routingKey, payload });
+  const transaction = payload as transactionType;
 };
 
-const handleTransactionDeleted: EventHandler = (routingKey, payload) => {
+const handleTransactionDeleted: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Transaction deleted", { routingKey, payload });
+  const transaction = payload as transactionType;
 };
 
 //$ Investment Handlers
-const handleInvestmentBuy: EventHandler = (routingKey, payload) => {
+const handleInvestmentBuy: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Investment buy", { routingKey, payload });
+  const investment = payload as investmentType;
 };
 
-const handleInvestmentSell: EventHandler = (routingKey, payload) => {
+const handleInvestmentSell: EventHandler = (
+  routingKey: string,
+  payload: unknown,
+) => {
   logger.info("Investment sell", { routingKey, payload });
+  const investment = payload as investmentType;
 };
 
 //$ Handler Registry
@@ -64,6 +157,7 @@ const processMessage = (channel: ChannelWrapper, msg: ConsumeMessage): void => {
   // Parse payload
   let payload: unknown;
   try {
+    const unk = payload as unknown;
     payload = JSON.parse(msg.content.toString());
   } catch {
     logger.warn("Unparseable message, discarding", { routingKey });

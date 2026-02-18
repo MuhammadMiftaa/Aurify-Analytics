@@ -4,6 +4,7 @@ import {
   userFinancialSummariesModel,
   userNetWorthCompositionModel,
   userTransactionModel,
+  userWalletModel,
 } from "./model";
 import logger from "./logger";
 
@@ -631,6 +632,36 @@ export const initialSync = async (
   logger.info("Starting initial sync process...");
 
   try {
+    // 0. Process UserWallet data (helper collection)
+    logger.info("Processing user wallets...");
+    if (wallets.length > 0) {
+      await userWalletModel.bulkWrite(
+        wallets.map((wallet) => ({
+          updateOne: {
+            filter: { WalletID: wallet.id },
+            update: {
+              $set: {
+                WalletID: wallet.id,
+                UserID: wallet.user_id,
+                WalletName: wallet.name,
+                WalletType: wallet.wallet_type,
+                WalletTypeName: wallet.wallet_type_name,
+                Balance: wallet.balance,
+                Number: wallet.number,
+                IsActive: true,
+                UpdatedAt: new Date(),
+              },
+              $setOnInsert: {
+                CreatedAt: new Date(),
+              },
+            },
+            upsert: true,
+          },
+        })),
+      );
+      logger.info(`✓ Processed ${wallets.length} wallet records`);
+    }
+
     // 1. Process UserTransaction data
     logger.info("Processing user transactions...");
     const transactionGroups = groupTransactionsByUserWalletCategoryDate(

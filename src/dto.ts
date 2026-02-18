@@ -119,10 +119,11 @@ export const transactionSchema = z.object({
   category_id: z.uuid(),
   category_name: z.string(),
   category_type: z.string(),
-  transaction_date: z.date(),
+  transaction_date: z.coerce.date(),
   description: z.string(),
-  created_at: z.date(),
-  updated_at: z.date(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  attachments: z.array(z.string()).nullable().default([]),
 });
 
 export const investmentSchema = z.object({

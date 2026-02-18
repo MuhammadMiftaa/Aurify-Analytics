@@ -232,6 +232,31 @@ const userNetWorthComposition: Schema = new Schema({
 // Unique: one document per user (latest snapshot)
 userNetWorthComposition.index({ UserID: 1 }, { unique: true });
 
+// ═══════════════════════════════════════════════════
+// 5. USER WALLET (helper collection for wallet snapshots)
+//    Granularity: One document per wallet
+// ═══════════════════════════════════════════════════
+const userWallet: Schema = new Schema({
+  WalletID: { type: String, required: true },
+  UserID: { type: String, required: true },
+  WalletName: { type: String, required: true },
+  WalletType: String,
+  WalletTypeName: String,
+  Balance: { type: Number, default: 0 },
+  Currency: String,
+  Icon: String,
+  IsActive: { type: Boolean, default: true },
+
+  CreatedAt: { type: Date, default: Date.now },
+  UpdatedAt: { type: Date, default: Date.now },
+});
+
+// Unique: one document per wallet
+userWallet.index({ WalletID: 1 }, { unique: true });
+// Query indexes
+userWallet.index({ UserID: 1 });
+userWallet.index({ UserID: 1, IsActive: 1 });
+
 export const userTransactionModel = model("UserTransaction", userTransaction);
 export const userBalanceModel = model("UserBalance", userBalance);
 export const userFinancialSummariesModel = model(
@@ -242,3 +267,4 @@ export const userNetWorthCompositionModel = model(
   "UserNetWorthComposition",
   userNetWorthComposition,
 );
+export const userWalletModel = model("UserWallet", userWallet);

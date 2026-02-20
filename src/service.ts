@@ -3,13 +3,13 @@ import {
   getUserFinancialSummaryType,
   getUserNetWorthCompositionType,
   getUserTransactionType,
-} from "./dto";
+} from "./utils/dto";
 import {
   userBalanceModel,
   userFinancialSummariesModel,
   userNetWorthCompositionModel,
   userTransactionModel,
-} from "./model";
+} from "./utils/model";
 
 const getUserTransaction = async (data: getUserTransactionType) => {
   const { userID, walletID, dateOption } = data;

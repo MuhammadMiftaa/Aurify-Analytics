@@ -20,7 +20,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@muhammadmiftaa/refina-protobuf": "github:MuhammadMiftaa/Refina-Protobuf#v1.3.1",
+    "@muhammadmiftaa/refina-protobuf": "github:MuhammadMiftaa/Refina-Protobuf#v1.3.3",
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
     "dotenv": "^17.2.4",

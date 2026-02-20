@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load OpenAPI specification
-const openApiPath = path.join(__dirname, '../openapi.yaml');
+const openApiPath = path.join(__dirname, '../../openapi.yaml');
 const openApiFile = fs.readFileSync(openApiPath, 'utf8');
 const swaggerDocument = YAML.parse(openApiFile);
 

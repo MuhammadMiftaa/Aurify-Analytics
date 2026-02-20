@@ -1,16 +1,21 @@
 import amqp from "amqp-connection-manager";
 import type { AmqpConnectionManager } from "amqp-connection-manager";
-import logger from "./logger";
-import env from "./env";
+import logger from "../utils/logger";
+import env from "../utils/env";
 
 let connection: AmqpConnectionManager | null = null;
 
 export const getConnection = (): AmqpConnectionManager => {
   if (connection) return connection;
 
-  connection = amqp.connect([`amqp://${env.RABBITMQ_USER}:${env.RABBITMQ_PASSWORD}@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VIRTUAL_HOST}`], {
-    reconnectTimeInSeconds: 5,
-  });
+  connection = amqp.connect(
+    [
+      `amqp://${env.RABBITMQ_USER}:${env.RABBITMQ_PASSWORD}@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VIRTUAL_HOST}`,
+    ],
+    {
+      reconnectTimeInSeconds: 5,
+    },
+  );
 
   connection.on("connect", () => {
     logger.info("RabbitMQ connected");

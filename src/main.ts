@@ -1,17 +1,17 @@
-import env from "./env";
+import env from "./utils/env";
 import express, { Request, Response } from "express";
-import logger from "./logger";
+import logger from "./utils/logger";
 import middleware from "./middleware";
 import route from "./route";
 import { connect } from "mongoose";
 import handler from "./handler";
 import { GRPCClient } from "./grpc/client/client";
-import { WalletGRPCClient } from "./grpc/client/wallet";
-import { TransactionGRPCClient } from "./grpc/client/transaction";
-import { InvestmentGRPCClient } from "./grpc/client/investment";
-import setupSwagger from "./swagger";
-import { startConsumer } from "./consumer";
-import { closeConnection } from "./queue";
+import { WalletGRPCClient } from "./grpc/client/client.wallet";
+import { TransactionGRPCClient } from "./grpc/client/client.transaction";
+import { InvestmentGRPCClient } from "./grpc/client/client.investment";
+import setupSwagger from "./utils/swagger";
+import { startConsumer } from "./event/consumer/consumer";
+import { closeConnection } from "./event/config";
 
 connect(env.DATABASE_URL)
   .then(() => {
@@ -24,7 +24,11 @@ connect(env.DATABASE_URL)
 
 const app = express();
 
-const grpcClient = new GRPCClient(env.WALLET_ADDRESS, env.TRANSACTION_ADDRESS, env.INVESTMENT_ADDRESS);
+const grpcClient = new GRPCClient(
+  env.WALLET_ADDRESS,
+  env.TRANSACTION_ADDRESS,
+  env.INVESTMENT_ADDRESS,
+);
 app.locals.walletGRPCClient = new WalletGRPCClient(grpcClient);
 app.locals.transactionGRPCClient = new TransactionGRPCClient(grpcClient);
 app.locals.investmentGRPCClient = new InvestmentGRPCClient(grpcClient);
@@ -47,7 +51,7 @@ app.use("/analytics", route);
 app.use(middleware.notFoundHandler);
 app.use(middleware.errorHandler);
 
-startConsumer()
+startConsumer();
 
 const shutdown = async (signal: string) => {
   logger.info(`${signal} received, shutting down gracefully...`);
@@ -56,7 +60,7 @@ const shutdown = async (signal: string) => {
   process.exit(0);
 };
 
-process.on("SIGINT",  () => shutdown("SIGINT"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 app.listen(env.PORT, () => {

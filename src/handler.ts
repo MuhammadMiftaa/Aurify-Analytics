@@ -7,13 +7,13 @@ import {
   investmentType,
   transactionType,
   walletType,
-} from "./dto";
+} from "./utils/dto";
 import service from "./service";
-import { successResponse } from "./response";
-import env from "./env";
-import { ForbiddenError, NotFoundError } from "./errors";
-import logger from "./logger";
-import { initialSync } from "./initial-sync";
+import { successResponse } from "./utils/response";
+import env from "./utils/env";
+import { ForbiddenError, NotFoundError } from "./utils/errors";
+import logger from "./utils/logger";
+import { initialSync } from "./grpc/client/initSync";
 
 const getUserTransaction = async (
   req: Request,

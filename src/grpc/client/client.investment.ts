@@ -1,6 +1,6 @@
 import investmentPbModule from "@muhammadmiftaa/refina-protobuf/investment/investment_pb.js";
-import logger from "../../logger";
-import { investmentType } from "../../dto";
+import logger from "../../utils/logger";
+import { investmentType } from "../../utils/dto";
 import { GRPCClient } from "./client";
 
 const ipb = (investmentPbModule as any).proto?.investment || investmentPbModule;

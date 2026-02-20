@@ -1,7 +1,7 @@
 // wallet.ts
 import walletPbModule from "@muhammadmiftaa/refina-protobuf/wallet/wallet_pb.js";
-import { walletType } from "../../dto.js";
-import logger from "../../logger";
+import { walletType } from "../../utils/dto.js";
+import logger from "../../utils/logger.js";
 import { GRPCClient } from "./client.js";
 
 const wpb = (walletPbModule as any).proto?.wallet || walletPbModule;

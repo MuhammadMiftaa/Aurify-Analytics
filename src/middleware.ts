@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import logger from "./logger";
-import { UnauthorizedError, ValidationError } from "./errors";
-import { ERROR_MESSAGES } from "./constant";
+import logger from "./utils/logger";
+import { UnauthorizedError, ValidationError } from "./utils/errors";
+import { ERROR_MESSAGES } from "./utils/constant";
 import { ZodType } from "zod";
-import helper from "./helper";
-import { errorResponse } from "./response";
+import helper from "./utils/helper";
+import { errorResponse } from "./utils/response";
 
 //$ Authentication middleware
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

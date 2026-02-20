@@ -6,7 +6,7 @@ import {
   getUserTransactionSchema,
   getUserFinancialSummarySchema,
   getUserNetWorthCompositionSchema,
-} from "./dto";
+} from "./utils/dto";
 
 const router = Router();
 

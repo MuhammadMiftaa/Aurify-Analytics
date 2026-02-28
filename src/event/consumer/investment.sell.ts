@@ -8,6 +8,7 @@ import consumerHelper from "./consumer.helper";
 import logger from "../../utils/logger";
 import { userInvestmentModel } from "../../utils/model";
 import {
+  LogInvestmentSellBatchStarted,
   LogInvestmentSellBuyPositionNotFound,
   LogInvestmentSellFailed,
   LogInvestmentSellItemProcessed,
@@ -27,7 +28,7 @@ export const handleInvestmentSell: EventHandler = async (
       payload,
     );
 
-    logger.info(LogInvestmentSellProcessed, {
+    logger.info(LogInvestmentSellBatchStarted, {
       service: RabbitmqConsumerService,
       item_count: sellItems.length,
     });
@@ -67,12 +68,9 @@ export const handleInvestmentSell: EventHandler = async (
 
       // Update exchange rates if provided (non-null)
       const rateUpdate: Record<string, number> = {};
-      if (sell.assetCode.toIDR != null)
-        rateUpdate.ToIDR = sell.assetCode.toIDR;
-      if (sell.assetCode.toUSD != null)
-        rateUpdate.ToUSD = sell.assetCode.toUSD;
-      if (sell.assetCode.toEUR != null)
-        rateUpdate.ToEUR = sell.assetCode.toEUR;
+      if (sell.assetCode.toIDR != null) rateUpdate.ToIDR = sell.assetCode.toIDR;
+      if (sell.assetCode.toUSD != null) rateUpdate.ToUSD = sell.assetCode.toUSD;
+      if (sell.assetCode.toEUR != null) rateUpdate.ToEUR = sell.assetCode.toEUR;
 
       await userInvestmentModel.updateOne(
         { InvestmentID: sell.investmentId },

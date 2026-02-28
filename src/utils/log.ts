@@ -116,6 +116,7 @@ export const LogTransactionDeletedFailed = "transaction_deleted_failed";
 export const LogWalletNotFoundSkipped = "wallet_not_found_skipped";
 
 // --- investment events ---
+export const LogInvestmentSellBatchStarted = "investment_sell_batch_started";
 export const LogInvestmentBuyProcessed = "investment_buy_processed";
 export const LogInvestmentBuyFailed = "investment_buy_failed";
 export const LogInvestmentSellProcessed = "investment_sell_processed";

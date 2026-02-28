@@ -1,18 +1,18 @@
-import swaggerUi from 'swagger-ui-express';
-import { Express } from 'express';
-import YAML from 'yaml';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import logger from './logger';
-import { HTTPServerService, LogSwaggerUIStarted } from './log';
+import swaggerUi from "swagger-ui-express";
+import { Express } from "express";
+import YAML from "yaml";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import logger from "./logger";
+import { HTTPServerService, LogSwaggerUIStarted } from "./log";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load OpenAPI specification
-const openApiPath = path.join(__dirname, '../../openapi.yaml');
-const openApiFile = fs.readFileSync(openApiPath, 'utf8');
+const openApiPath = path.join(__dirname, "../../openapi.yaml");
+const openApiFile = fs.readFileSync(openApiPath, "utf8");
 const swaggerDocument = YAML.parse(openApiFile);
 
 // Swagger UI options
@@ -22,18 +22,18 @@ const swaggerOptions = {
     .swagger-ui .info { margin: 50px 0 }
     .swagger-ui .info .title { font-size: 36px }
   `,
-  customSiteTitle: 'Refina Analytics API Documentation',
-  customfavIcon: '/favicon.ico',
+  customSiteTitle: "Refina Analytics API Documentation",
+  customfavIcon: "/favicon.ico",
   swaggerOptions: {
     persistAuthorization: true,
     displayRequestDuration: true,
     filter: true,
     syntaxHighlight: {
       activate: true,
-      theme: 'monokai'
+      theme: "monokai",
     },
     tryItOutEnabled: true,
-  }
+  },
 };
 
 /**
@@ -43,28 +43,28 @@ const swaggerOptions = {
 export function setupSwagger(app: Express): void {
   // Serve Swagger UI
   app.use(
-    '/api-docs',
+    "/api-docs",
     swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument, swaggerOptions)
+    swaggerUi.setup(swaggerDocument, swaggerOptions),
   );
 
   // Serve raw OpenAPI JSON
-  app.get('/api-docs.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
+  app.get("/api-docs.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     res.send(swaggerDocument);
   });
 
   // Serve raw OpenAPI YAML
-  app.get('/api-docs.yaml', (req, res) => {
-    res.setHeader('Content-Type', 'text/yaml');
+  app.get("/api-docs.yaml", (req, res) => {
+    res.setHeader("Content-Type", "text/yaml");
     res.send(openApiFile);
   });
 
   logger.info(LogSwaggerUIStarted, {
     service: HTTPServerService,
-    docs_url: '/api-docs',
-    json_url: '/api-docs.json',
-    yaml_url: '/api-docs.yaml',
+    docs_url: "/api-docs",
+    json_url: "/api-docs.json",
+    yaml_url: "/api-docs.yaml",
   });
 }
 

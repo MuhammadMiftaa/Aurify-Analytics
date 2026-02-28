@@ -30,7 +30,10 @@ export const initialSync = async (
 
   try {
     // Process UserWallet data (helper collection)
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_wallets" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "user_wallets",
+    });
     if (wallets.length > 0) {
       await userWalletModel.bulkWrite(
         wallets.map((wallet) => ({
@@ -64,7 +67,10 @@ export const initialSync = async (
     }
 
     // Process UserInvestment helper data
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_investments" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "user_investments",
+    });
     if (investments.length > 0) {
       await userInvestmentModel.bulkWrite(
         investments.map((inv) => ({
@@ -110,7 +116,10 @@ export const initialSync = async (
     }
 
     // 1. Process UserTransaction data
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_transactions" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "user_transactions",
+    });
     const transactionGroups = groupTransactionsByUserWalletCategoryDate(
       transactions,
       wallets,
@@ -140,7 +149,10 @@ export const initialSync = async (
     }
 
     // 2. Process UserBalance data
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_balances" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "user_balances",
+    });
     const dailyBalances = calculateDailyBalances(transactions, wallets);
     const balanceDocs = Array.from(dailyBalances.values());
 
@@ -165,7 +177,10 @@ export const initialSync = async (
     }
 
     // 3. Process UserFinancialSummaries data
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "financial_summaries" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "financial_summaries",
+    });
     const financialSummaries = calculateFinancialSummaries(
       transactions,
       wallets,
@@ -195,7 +210,10 @@ export const initialSync = async (
     }
 
     // 4. Process UserNetWorthComposition data
-    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "net_worth_compositions" });
+    logger.info(LogInitialSyncStepStarted, {
+      service: MainService,
+      step: "net_worth_compositions",
+    });
     const netWorthCompositions = calculateNetWorthCompositions(
       wallets,
       investments,

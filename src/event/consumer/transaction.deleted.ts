@@ -11,6 +11,12 @@ import {
   userTransactionModel,
   userWalletModel,
 } from "../../utils/model";
+import {
+  LogTransactionDeletedFailed,
+  LogTransactionDeletedProcessed,
+  LogWalletNotFoundSkipped,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 export const handleTransactionDeleted: EventHandler = async (
   _routingKey: string,
@@ -26,8 +32,9 @@ export const handleTransactionDeleted: EventHandler = async (
       .findOne({ WalletID: transaction.wallet_id })
       .lean()) as any;
     if (!wallet) {
-      logger.warn("Wallet not found, skipping transaction delete", {
-        walletId: transaction.wallet_id,
+      logger.warn(LogWalletNotFoundSkipped, {
+        service: RabbitmqConsumerService,
+        wallet_id: transaction.wallet_id,
       });
       return;
     }
@@ -90,11 +97,15 @@ export const handleTransactionDeleted: EventHandler = async (
     // ─── 3. Recalculate financial summary ───
     await consumerHelper.recalcFinancialSummary(wallet.UserID, txDate);
 
-    logger.info("Transaction deleted processed", {
-      transactionId: transaction.id,
+    logger.info(LogTransactionDeletedProcessed, {
+      service: RabbitmqConsumerService,
+      transaction_id: transaction.id,
     });
   } catch (error) {
-    logger.error("Failed to handle transaction.deleted", { error });
+    logger.error(LogTransactionDeletedFailed, {
+      service: RabbitmqConsumerService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

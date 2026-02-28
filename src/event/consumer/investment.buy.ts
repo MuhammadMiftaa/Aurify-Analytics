@@ -7,6 +7,11 @@ import helper from "../../utils/helper";
 import consumerHelper from "./consumer.helper";
 import logger from "../../utils/logger";
 import { userInvestmentModel } from "../../utils/model";
+import {
+  LogInvestmentBuyFailed,
+  LogInvestmentBuyProcessed,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 export const handleInvestmentBuy: EventHandler = async (
   _routingKey: string,
@@ -61,11 +66,16 @@ export const handleInvestmentBuy: EventHandler = async (
       new Date(investment.date),
     );
 
-    logger.info("Investment buy processed", {
-      investmentId: investment.id,
+    logger.info(LogInvestmentBuyProcessed, {
+      service: RabbitmqConsumerService,
+      investment_id: investment.id,
+      user_id: investment.userId,
     });
   } catch (error) {
-    logger.error("Failed to handle investment.buy", { error });
+    logger.error(LogInvestmentBuyFailed, {
+      service: RabbitmqConsumerService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

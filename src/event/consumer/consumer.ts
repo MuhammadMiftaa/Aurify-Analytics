@@ -12,6 +12,16 @@ import { handleTransactionUpdated } from "./transaction.updated";
 import { handleTransactionDeleted } from "./transaction.deleted";
 import { handleInvestmentBuy } from "./investment.buy";
 import { handleInvestmentSell } from "./investment.sell";
+import {
+  LogChannelClosed,
+  LogChannelError,
+  LogConsumerReady,
+  LogHandlerFailed,
+  LogHandlerNotFound,
+  LogMessageUnparseable,
+  LogQueueBound,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 const handlers: Record<string, EventHandler> = {
   "wallet.created": handleWalletCreated,
@@ -36,7 +46,10 @@ const processMessage = async (
   try {
     payload = JSON.parse(msg.content.toString());
   } catch {
-    logger.warn("Unparseable message, discarding", { routingKey });
+    logger.warn(LogMessageUnparseable, {
+      service: RabbitmqConsumerService,
+      routingKey,
+    });
     channel.nack(msg, false, false);
     return;
   }
@@ -44,7 +57,10 @@ const processMessage = async (
   // Dispatch to handler
   const handler = handlers[routingKey];
   if (!handler) {
-    logger.warn("No handler for routing key, discarding", { routingKey });
+    logger.warn(LogHandlerNotFound, {
+      service: RabbitmqConsumerService,
+      routingKey,
+    });
     channel.ack(msg);
     return;
   }
@@ -54,7 +70,11 @@ const processMessage = async (
     channel.ack(msg);
   } catch (err: unknown) {
     const error = err instanceof Error ? err.message : String(err);
-    logger.error("Handler threw error, requeueing", { routingKey, error });
+    logger.error(LogHandlerFailed, {
+      service: RabbitmqConsumerService,
+      routingKey,
+      error,
+    });
     channel.nack(msg, false, true);
   }
 };
@@ -71,7 +91,8 @@ export const startConsumer = (): ChannelWrapper => {
 
       for (const routingKey of ROUTING_KEYS) {
         await ch.bindQueue(QUEUE_NAME, EXCHANGE_NAME, routingKey);
-        logger.info("Queue bound", {
+        logger.info(LogQueueBound, {
+          service: RabbitmqConsumerService,
           queue: QUEUE_NAME,
           exchange: EXCHANGE_NAME,
           routingKey,
@@ -85,7 +106,8 @@ export const startConsumer = (): ChannelWrapper => {
         processMessage(channel, msg);
       });
 
-      logger.info("Consumer setup complete", {
+      logger.info(LogConsumerReady, {
+        service: RabbitmqConsumerService,
         queue: QUEUE_NAME,
         exchange: EXCHANGE_NAME,
         bindings: ROUTING_KEYS,
@@ -94,11 +116,14 @@ export const startConsumer = (): ChannelWrapper => {
   });
 
   channel.on("error", (err) => {
-    logger.error("Channel error", { error: err.message });
+    logger.error(LogChannelError, {
+      service: RabbitmqConsumerService,
+      error: err.message,
+    });
   });
 
   channel.on("close", () => {
-    logger.warn("Channel closed, will be recreated on reconnect");
+    logger.warn(LogChannelClosed, { service: RabbitmqConsumerService });
   });
 
   return channel;

@@ -3,6 +3,11 @@ import helper from "../../utils/helper";
 import consumerHelper from "./consumer.helper";
 import { userWalletModel } from "../../utils/model";
 import logger from "../../utils/logger";
+import {
+  LogWalletDeletedFailed,
+  LogWalletDeletedProcessed,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 export const handleWalletDeleted: EventHandler = async (
   _routingKey: string,
@@ -17,9 +22,16 @@ export const handleWalletDeleted: EventHandler = async (
     );
 
     await consumerHelper.recalcNetWorth(wallet.user_id);
-    logger.info("Wallet deleted processed", { walletId: wallet.id });
+    logger.info(LogWalletDeletedProcessed, {
+      service: RabbitmqConsumerService,
+      wallet_id: wallet.id,
+      user_id: wallet.user_id,
+    });
   } catch (error) {
-    logger.error("Failed to handle wallet.deleted", { error });
+    logger.error(LogWalletDeletedFailed, {
+      service: RabbitmqConsumerService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

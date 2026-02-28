@@ -3,6 +3,11 @@ import helper from "../../utils/helper";
 import consumerHelper from "./consumer.helper";
 import { userWalletModel } from "../../utils/model";
 import logger from "../../utils/logger";
+import {
+  LogWalletCreatedFailed,
+  LogWalletCreatedProcessed,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 export const handleWalletCreated: EventHandler = async (
   _routingKey: string,
@@ -29,9 +34,16 @@ export const handleWalletCreated: EventHandler = async (
     );
 
     await consumerHelper.recalcNetWorth(wallet.user_id);
-    logger.info("Wallet created processed", { walletId: wallet.id });
+    logger.info(LogWalletCreatedProcessed, {
+      service: RabbitmqConsumerService,
+      wallet_id: wallet.id,
+      user_id: wallet.user_id,
+    });
   } catch (error) {
-    logger.error("Failed to handle wallet.created", { error });
+    logger.error(LogWalletCreatedFailed, {
+      service: RabbitmqConsumerService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

@@ -4,6 +4,8 @@ import YAML from 'yaml';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from './logger';
+import { HTTPServerService, LogSwaggerUIStarted } from './log';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,9 +60,12 @@ export function setupSwagger(app: Express): void {
     res.send(openApiFile);
   });
 
-  console.log('📚 API Documentation available at: /api-docs');
-  console.log('📄 OpenAPI JSON available at: /api-docs.json');
-  console.log('📄 OpenAPI YAML available at: /api-docs.yaml');
+  logger.info(LogSwaggerUIStarted, {
+    service: HTTPServerService,
+    docs_url: '/api-docs',
+    json_url: '/api-docs.json',
+    yaml_url: '/api-docs.yaml',
+  });
 }
 
 export default setupSwagger;

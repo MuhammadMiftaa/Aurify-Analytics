@@ -7,6 +7,14 @@ import helper from "../../utils/helper";
 import consumerHelper from "./consumer.helper";
 import logger from "../../utils/logger";
 import { userInvestmentModel } from "../../utils/model";
+import {
+  LogInvestmentSellBuyPositionNotFound,
+  LogInvestmentSellFailed,
+  LogInvestmentSellItemProcessed,
+  LogInvestmentSellPayloadEmpty,
+  LogInvestmentSellProcessed,
+  RabbitmqConsumerService,
+} from "../../utils/log";
 
 export const handleInvestmentSell: EventHandler = async (
   _routingKey: string,
@@ -14,14 +22,20 @@ export const handleInvestmentSell: EventHandler = async (
 ) => {
   try {
     // Validate as array of sell items (batch FIFO sell)
-    logger.info("Processing investment.sell event", JSON.stringify(payload));
     const sellItems = helper.validate<investmentSellType>(
       investmentSellSchema,
       payload,
     );
 
+    logger.info(LogInvestmentSellProcessed, {
+      service: RabbitmqConsumerService,
+      item_count: sellItems.length,
+    });
+
     if (sellItems.length === 0) {
-      logger.warn("Empty investment.sell payload, skipping");
+      logger.warn(LogInvestmentSellPayloadEmpty, {
+        service: RabbitmqConsumerService,
+      });
       return;
     }
 
@@ -36,9 +50,10 @@ export const handleInvestmentSell: EventHandler = async (
         .lean()) as any;
 
       if (!buyPosition) {
-        logger.warn("Buy position not found for sell event", {
-          sellId: sell.id,
-          investmentId: sell.investmentId,
+        logger.warn(LogInvestmentSellBuyPositionNotFound, {
+          service: RabbitmqConsumerService,
+          sell_id: sell.id,
+          investment_id: sell.investmentId,
         });
         continue;
       }
@@ -81,12 +96,13 @@ export const handleInvestmentSell: EventHandler = async (
       const sellDate = new Date(sell.date);
       if (sellDate > latestDate) latestDate = sellDate;
 
-      logger.info("Sell item processed", {
-        sellId: sell.id,
-        investmentId: sell.investmentId,
-        soldQuantity: sell.quantity,
-        remainingQuantity: Math.max(remainingQuantity, 0),
-        isFullySold,
+      logger.info(LogInvestmentSellItemProcessed, {
+        service: RabbitmqConsumerService,
+        sell_id: sell.id,
+        investment_id: sell.investmentId,
+        sold_quantity: sell.quantity,
+        remaining_quantity: Math.max(remainingQuantity, 0),
+        is_fully_sold: isFullySold,
       });
     }
 
@@ -94,12 +110,16 @@ export const handleInvestmentSell: EventHandler = async (
     await consumerHelper.recalcNetWorth(userId);
     await consumerHelper.recalcFinancialSummary(userId, latestDate);
 
-    logger.info("Investment sell batch processed", {
-      userId,
-      itemCount: sellItems.length,
+    logger.info(LogInvestmentSellProcessed, {
+      service: RabbitmqConsumerService,
+      user_id: userId,
+      item_count: sellItems.length,
     });
   } catch (error) {
-    logger.error("Failed to handle investment.sell", { error });
+    logger.error(LogInvestmentSellFailed, {
+      service: RabbitmqConsumerService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

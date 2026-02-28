@@ -12,17 +12,25 @@ import { groupTransactionsByUserWalletCategoryDate } from "./initSync.userTransa
 import { calculateDailyBalances } from "./initSync.userBalances";
 import { calculateFinancialSummaries } from "./initSync.UserFinancialSummaries";
 import { calculateNetWorthCompositions } from "./initSync.UserNetWorthComposition";
+import {
+  LogInitialSyncCompleted,
+  LogInitialSyncFailed,
+  LogInitialSyncStarted,
+  LogInitialSyncStepCompleted,
+  LogInitialSyncStepStarted,
+  MainService,
+} from "../../utils/log";
 
 export const initialSync = async (
   wallets: walletType[],
   transactions: transactionType[],
   investments: investmentType[],
 ) => {
-  logger.info("Starting initial sync process...");
+  logger.info(LogInitialSyncStarted, { service: MainService });
 
   try {
     // Process UserWallet data (helper collection)
-    logger.info("Processing user wallets...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_wallets" });
     if (wallets.length > 0) {
       await userWalletModel.bulkWrite(
         wallets.map((wallet) => ({
@@ -48,11 +56,15 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(`✓ Processed ${wallets.length} wallet records`);
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "user_wallets",
+        count: wallets.length,
+      });
     }
 
     // Process UserInvestment helper data
-    logger.info("Processing user investments helper...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_investments" });
     if (investments.length > 0) {
       await userInvestmentModel.bulkWrite(
         investments.map((inv) => ({
@@ -90,11 +102,15 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(`✓ Processed ${investments.length} investment records`);
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "user_investments",
+        count: investments.length,
+      });
     }
 
     // 1. Process UserTransaction data
-    logger.info("Processing user transactions...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_transactions" });
     const transactionGroups = groupTransactionsByUserWalletCategoryDate(
       transactions,
       wallets,
@@ -116,13 +132,15 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(
-        `✓ Processed ${transactionDocs.length} user transaction records`,
-      );
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "user_transactions",
+        count: transactionDocs.length,
+      });
     }
 
     // 2. Process UserBalance data
-    logger.info("Processing user balances...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "user_balances" });
     const dailyBalances = calculateDailyBalances(transactions, wallets);
     const balanceDocs = Array.from(dailyBalances.values());
 
@@ -139,11 +157,15 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(`✓ Processed ${balanceDocs.length} user balance records`);
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "user_balances",
+        count: balanceDocs.length,
+      });
     }
 
     // 3. Process UserFinancialSummaries data
-    logger.info("Processing financial summaries...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "financial_summaries" });
     const financialSummaries = calculateFinancialSummaries(
       transactions,
       wallets,
@@ -165,13 +187,15 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(
-        `✓ Processed ${summaryDocs.length} financial summary records`,
-      );
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "financial_summaries",
+        count: summaryDocs.length,
+      });
     }
 
     // 4. Process UserNetWorthComposition data
-    logger.info("Processing net worth compositions...");
+    logger.info(LogInitialSyncStepStarted, { service: MainService, step: "net_worth_compositions" });
     const netWorthCompositions = calculateNetWorthCompositions(
       wallets,
       investments,
@@ -188,14 +212,19 @@ export const initialSync = async (
           },
         })),
       );
-      logger.info(
-        `✓ Processed ${compositionDocs.length} net worth composition records`,
-      );
+      logger.info(LogInitialSyncStepCompleted, {
+        service: MainService,
+        step: "net_worth_compositions",
+        count: compositionDocs.length,
+      });
     }
 
-    logger.info("✅ Initial sync completed successfully!");
+    logger.info(LogInitialSyncCompleted, { service: MainService });
   } catch (error) {
-    logger.error("❌ Initial sync failed:", error);
+    logger.error(LogInitialSyncFailed, {
+      service: MainService,
+      error: (error as Error).message,
+    });
     throw error;
   }
 };

@@ -9,31 +9,40 @@ import {
   walletType,
 } from "./utils/dto";
 import service from "./service";
-import { successResponse } from "./utils/response";
 import env from "./utils/env";
-import { ForbiddenError, NotFoundError } from "./utils/errors";
+import { ForbiddenError } from "./utils/errors";
 import logger from "./utils/logger";
-import { initialSync } from "./grpc/client/initSync";
+import {
+  AnalyticsService,
+  LogGetUserTransactionFailed,
+  LogGetUserBalanceFailed,
+  LogGetUserFinancialSummaryFailed,
+  LogGetUserNetWorthCompositionFailed,
+  LogInitialSyncCompleted,
+  LogInitialSyncFailed,
+  LogInitialSyncForbidden,
+  REQUEST_ID_LOCAL_KEY,
+} from "./utils/log";
 
 const getUserTransaction = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
+  const requestID = req.requestID;
+
   try {
     const data: getUserTransactionType = req.body;
-    const result = await service.getUserTransaction(data);
-
-    res
-      .status(200)
-      .json(
-        successResponse(
-          200,
-          "User transactions retrieved successfully",
-          result,
-        ),
-      );
-  } catch (error) {
+    const userTransaction = await service.getUserTransaction(data);
+    // Read-only — no success log needed; middleware access log is sufficient
+    res.json(userTransaction);
+  } catch (error: any) {
+    logger.error(LogGetUserTransactionFailed, {
+      service: AnalyticsService,
+      request_id: requestID,
+      user_id: req.user?.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -43,16 +52,20 @@ const getUserBalance = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const requestID = req.requestID;
+
   try {
     const data: getUserBalanceType = req.body;
-    const result = await service.getUserBalance(data);
-
-    res
-      .status(200)
-      .json(
-        successResponse(200, "User balance retrieved successfully", result),
-      );
-  } catch (error) {
+    const userBalance = await service.getUserBalance(data);
+    // Read-only — no success log needed; middleware access log is sufficient
+    res.json(userBalance);
+  } catch (error: any) {
+    logger.error(LogGetUserBalanceFailed, {
+      service: AnalyticsService,
+      request_id: requestID,
+      user_id: req.user?.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -62,20 +75,20 @@ const getUserFinancialSummary = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const requestID = req.requestID;
+
   try {
     const data: getUserFinancialSummaryType = req.body;
-    const result = await service.getUserFinancialSummary(data);
-
-    res
-      .status(200)
-      .json(
-        successResponse(
-          200,
-          "User financial summary retrieved successfully",
-          result,
-        ),
-      );
-  } catch (error) {
+    const userFinancialSummary = await service.getUserFinancialSummary(data);
+    // Read-only — no success log needed; middleware access log is sufficient
+    res.json(userFinancialSummary);
+  } catch (error: any) {
+    logger.error(LogGetUserFinancialSummaryFailed, {
+      service: AnalyticsService,
+      request_id: requestID,
+      user_id: req.user?.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -85,24 +98,21 @@ const getUserNetWorthComposition = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const requestID = req.requestID;
+
   try {
     const data: getUserNetWorthCompositionType = req.body;
-    const result = await service.getUserNetWorthComposition(data);
-
-    if (!result) {
-      throw new NotFoundError("No net worth data found for user");
-    }
-
-    res
-      .status(200)
-      .json(
-        successResponse(
-          200,
-          "User net worth composition retrieved successfully",
-          result,
-        ),
-      );
-  } catch (error) {
+    const userNetWorthComposition =
+      await service.getUserNetWorthComposition(data);
+    // Read-only — no success log needed; middleware access log is sufficient
+    res.json(userNetWorthComposition);
+  } catch (error: any) {
+    logger.error(LogGetUserNetWorthCompositionFailed, {
+      service: AnalyticsService,
+      request_id: requestID,
+      user_id: req.user?.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -112,34 +122,45 @@ const initialSyncHandler = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const requestID = req.requestID;
+
   try {
     const secretKey = req.body.secretKey;
     if (secretKey !== env.INITIAL_SYNC_KEY) {
+      logger.warn(LogInitialSyncForbidden, {
+        service: AnalyticsService,
+        request_id: requestID,
+      });
       throw new ForbiddenError("Invalid secret key");
     }
 
-    logger.info("Starting initial sync - fetching data from gRPC services...");
-
-    // Fetch data from gRPC services
     const wallets =
-      (await req.app.locals.walletGRPCClient.getWallets()) as walletType[];
+      (await req.app.locals.walletGRPCClient.getWallets()) as Promise<
+        walletType[]
+      >;
     const transactions =
-      (await req.app.locals.transactionGRPCClient.getTransactions()) as transactionType[];
+      (await req.app.locals.transactionGRPCClient.getTransactions()) as Promise<
+        transactionType[]
+      >;
     const investments =
-      (await req.app.locals.investmentGRPCClient.getInvestments()) as investmentType[];
+      (await req.app.locals.investmentGRPCClient.getInvestments()) as Promise<
+        investmentType[]
+      >;
 
-    logger.info(
-      `Fetched data: ${wallets.length} wallets, ${transactions.length} transactions, ${investments.length} investments`,
-    );
+    logger.info(LogInitialSyncCompleted, {
+      service: AnalyticsService,
+      request_id: requestID,
+    });
 
-    // Process and sync data to MongoDB
-    const result = await initialSync(wallets, transactions, investments);
-
-    res
-      .status(200)
-      .json(successResponse(200, "Initial sync completed successfully"));
-  } catch (error) {
-    logger.error("Initial sync failed:", error);
+    res.json({ wallets, transactions, investments });
+  } catch (error: any) {
+    if (!error.isOperational) {
+      logger.error(LogInitialSyncFailed, {
+        service: AnalyticsService,
+        request_id: requestID,
+        error: error.message,
+      });
+    }
     next(error);
   }
 };

@@ -3,6 +3,13 @@ import walletPbModule from "@muhammadmiftaa/refina-protobuf/wallet/wallet_pb.js"
 import { walletType } from "../../utils/dto.js";
 import logger from "../../utils/logger.js";
 import { GRPCClient } from "./client.js";
+import {
+  GRPCClientService,
+  LogGetUserWalletsStreamCompleted,
+  LogGetUserWalletsStreamFailed,
+  LogGetWalletsStreamCompleted,
+  LogGetWalletsStreamFailed,
+} from "../../utils/log";
 
 const wpb = (walletPbModule as any).proto?.wallet || walletPbModule;
 
@@ -39,12 +46,18 @@ export class WalletGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Wallet Stream Completed:", wallets);
+        logger.info(LogGetWalletsStreamCompleted, {
+          service: GRPCClientService,
+          count: wallets.length,
+        });
         resolve(wallets);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Wallet Stream Error:", error);
+        logger.error(LogGetWalletsStreamFailed, {
+          service: GRPCClientService,
+          error: error.message,
+        });
         reject(error);
       });
     });
@@ -76,12 +89,20 @@ export class WalletGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Wallet Stream Completed:", wallets);
+        logger.info(LogGetUserWalletsStreamCompleted, {
+          service: GRPCClientService,
+          user_id: userID,
+          count: wallets.length,
+        });
         resolve(wallets);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Wallet Stream Error:", error);
+        logger.error(LogGetUserWalletsStreamFailed, {
+          service: GRPCClientService,
+          user_id: userID,
+          error: error.message,
+        });
         reject(error);
       });
     });

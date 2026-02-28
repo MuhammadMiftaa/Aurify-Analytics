@@ -2,6 +2,13 @@ import investmentPbModule from "@muhammadmiftaa/refina-protobuf/investment/inves
 import logger from "../../utils/logger";
 import { investmentType } from "../../utils/dto";
 import { GRPCClient } from "./client";
+import {
+  GRPCClientService,
+  LogGetInvestmentsStreamCompleted,
+  LogGetInvestmentsStreamFailed,
+  LogGetUserInvestmentsStreamCompleted,
+  LogGetUserInvestmentsStreamFailed,
+} from "../../utils/log";
 
 const ipb = (investmentPbModule as any).proto?.investment || investmentPbModule;
 
@@ -51,12 +58,18 @@ export class InvestmentGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Investment Stream Completed:", investments);
+        logger.info(LogGetInvestmentsStreamCompleted, {
+          service: GRPCClientService,
+          count: investments.length,
+        });
         resolve(investments);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Investment Stream Error:", error);
+        logger.error(LogGetInvestmentsStreamFailed, {
+          service: GRPCClientService,
+          error: error.message,
+        });
         reject(error);
       });
     });
@@ -103,12 +116,20 @@ export class InvestmentGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Investment Stream Completed:", investments);
+        logger.info(LogGetUserInvestmentsStreamCompleted, {
+          service: GRPCClientService,
+          user_id: userID,
+          count: investments.length,
+        });
         resolve(investments);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Investment Stream Error:", error);
+        logger.error(LogGetUserInvestmentsStreamFailed, {
+          service: GRPCClientService,
+          user_id: userID,
+          error: error.message,
+        });
         reject(error);
       });
     });

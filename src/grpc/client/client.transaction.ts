@@ -2,6 +2,13 @@ import transactionPbModule from "@muhammadmiftaa/refina-protobuf/transaction/tra
 import logger from "../../utils/logger";
 import { transactionType } from "../../utils/dto";
 import { GRPCClient } from "./client";
+import {
+  GRPCClientService,
+  LogGetTransactionsStreamCompleted,
+  LogGetTransactionsStreamFailed,
+  LogGetUserTransactionsStreamCompleted,
+  LogGetUserTransactionsStreamFailed,
+} from "../../utils/log";
 
 const tpb =
   (transactionPbModule as any).proto?.transaction || transactionPbModule;
@@ -41,12 +48,18 @@ export class TransactionGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Transaction Stream Completed:", transactions);
+        logger.info(LogGetTransactionsStreamCompleted, {
+          service: GRPCClientService,
+          count: transactions.length,
+        });
         resolve(transactions);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Transaction Stream Error:", error);
+        logger.error(LogGetTransactionsStreamFailed, {
+          service: GRPCClientService,
+          error: error.message,
+        });
         reject(error);
       });
     });
@@ -82,12 +95,20 @@ export class TransactionGRPCClient {
       });
 
       call.on("end", () => {
-        logger.info("Fetch Transaction Stream Completed:", transactions);
+        logger.info(LogGetUserTransactionsStreamCompleted, {
+          service: GRPCClientService,
+          wallet_ids: walletIDs,
+          count: transactions.length,
+        });
         resolve(transactions);
       });
 
       call.on("error", (error) => {
-        logger.error("Fetch Transaction Stream Error:", error);
+        logger.error(LogGetUserTransactionsStreamFailed, {
+          service: GRPCClientService,
+          wallet_ids: walletIDs,
+          error: error.message,
+        });
         reject(error);
       });
     });

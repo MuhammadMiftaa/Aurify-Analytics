@@ -12,13 +12,28 @@ import { InvestmentGRPCClient } from "./grpc/client/client.investment";
 import setupSwagger from "./utils/swagger";
 import { startConsumer } from "./event/consumer/consumer";
 import { closeConnection } from "./event/config";
+import {
+  DatabaseService,
+  HTTPServerService,
+  LogDBConnected,
+  LogDBConnectFailed,
+  LogHTTPServerStarted,
+  LogHTTPServerClosed,
+  LogShutdownStarted,
+  LogUncaughtException,
+  LogUnhandledRejection,
+  MainService,
+} from "./utils/log";
 
 connect(env.DATABASE_URL)
   .then(() => {
-    logger.info("Connected to MongoDB");
+    logger.info(LogDBConnected, { service: DatabaseService });
   })
   .catch((error) => {
-    logger.error("MongoDB connection failed", { error: error.message });
+    logger.error(LogDBConnectFailed, {
+      service: DatabaseService,
+      error: error.message,
+    });
     process.exit(1);
   });
 
@@ -35,7 +50,9 @@ app.locals.investmentGRPCClient = new InvestmentGRPCClient(grpcClient);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(middleware.responseInterceptor);
+
+// Middleware order: requestID → requestLogger → router
+app.use(middleware.requestIDMiddleware);
 app.use(middleware.requestLogger);
 
 setupSwagger(app);
@@ -53,20 +70,43 @@ app.use(middleware.errorHandler);
 
 startConsumer();
 
-const shutdown = async (signal: string) => {
-  logger.info(`${signal} received, shutting down gracefully...`);
-  await closeConnection();
-  logger.info("RabbitMQ connection closed");
-  process.exit(0);
+const httpServer = app.listen(env.PORT, () => {
+  logger.info(LogHTTPServerStarted, {
+    service: HTTPServerService,
+    port: env.PORT,
+    env: env.NODE_ENV,
+    log_level: env.LOG_LEVEL,
+  });
+});
+
+// Graceful shutdown
+const shutdown = async (signal?: string) => {
+  logger.info(LogShutdownStarted, { service: MainService });
+
+  httpServer.close(async () => {
+    await closeConnection();
+    logger.info(LogHTTPServerClosed, { service: HTTPServerService });
+    process.exit(0);
+  });
 };
 
-process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 
-app.listen(env.PORT, () => {
-  logger.info(`Server started on port ${env.PORT}`);
-  logger.info(`Environment: ${env.NODE_ENV}`);
-  logger.info(`Log level: ${env.LOG_LEVEL}`);
+process.on("uncaughtException", (error) => {
+  logger.error(LogUncaughtException, {
+    service: MainService,
+    error: error.message,
+  });
+  shutdown();
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.error(LogUnhandledRejection, {
+    service: MainService,
+    error: reason instanceof Error ? reason.message : String(reason),
+  });
+  shutdown();
 });
 
 export default app;

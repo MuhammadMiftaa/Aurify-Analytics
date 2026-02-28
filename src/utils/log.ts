@@ -91,6 +91,7 @@ export const LogRabbitmqConnectionClosed = "rabbitmq_connection_closed";
 
 // --- consumer core (consumer.ts) ---
 export const LogMessageUnparseable = "message_unparseable";
+export const LogMessageDiscarded = "message_discarded";
 export const LogHandlerNotFound = "handler_not_found";
 export const LogHandlerFailed = "handler_failed";
 export const LogQueueBound = "queue_bound";

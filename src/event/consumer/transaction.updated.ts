@@ -32,11 +32,12 @@ export const handleTransactionUpdated: EventHandler = async (
       .findOne({ WalletID: transaction.wallet_id })
       .lean()) as any;
     if (!wallet) {
-      logger.warn(LogWalletNotFoundSkipped, {
+      logger.error(LogWalletNotFoundSkipped, {
         service: RabbitmqConsumerService,
         wallet_id: transaction.wallet_id,
       });
-      return;
+
+      throw new Error("Wallet not found");
     }
 
     const txDate = new Date(transaction.transaction_date);

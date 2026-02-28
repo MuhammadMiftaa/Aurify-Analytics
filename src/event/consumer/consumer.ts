@@ -3,7 +3,14 @@ import type { ChannelWrapper } from "amqp-connection-manager";
 import logger from "../../utils/logger";
 import { getConnection } from "../config";
 import { EventHandler } from "../../utils/dto";
-import { EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS } from "../../utils/constant";
+import {
+  EXCHANGE_NAME,
+  QUEUE_NAME,
+  ROUTING_KEYS,
+  RETRY_QUEUE_NAME,
+  MAX_RETRY_COUNT,
+  RETRY_DELAY_MS,
+} from "../../utils/constant";
 import { handleWalletCreated } from "./wallet.created";
 import { handleWalletUpdated } from "./wallet.updated";
 import { handleWalletDeleted } from "./wallet.deleted";
@@ -18,6 +25,7 @@ import {
   LogConsumerReady,
   LogHandlerFailed,
   LogHandlerNotFound,
+  LogMessageDiscarded,
   LogMessageUnparseable,
   LogQueueBound,
   RabbitmqConsumerService,
@@ -39,7 +47,9 @@ const processMessage = async (
   channel: ChannelWrapper,
   msg: ConsumeMessage,
 ): Promise<void> => {
-  const routingKey = msg.fields.routingKey;
+  const routingKey =
+    (msg.properties.headers?.["x-original-routing-key"] as string) ||
+    msg.fields.routingKey;
 
   // Parse payload
   let payload: unknown;
@@ -70,12 +80,47 @@ const processMessage = async (
     channel.ack(msg);
   } catch (err: unknown) {
     const error = err instanceof Error ? err.message : String(err);
+    const retryCount = (msg.properties.headers?.["x-retry-count"] ??
+      0) as number;
+
     logger.error(LogHandlerFailed, {
       service: RabbitmqConsumerService,
       routingKey,
       error,
+      retryCount,
+      maxRetry: MAX_RETRY_COUNT,
     });
-    channel.nack(msg, false, true);
+
+    if (retryCount >= MAX_RETRY_COUNT) {
+      // Max retry reached — discard message
+      logger.error(LogMessageDiscarded, {
+        service: RabbitmqConsumerService,
+        routingKey,
+        error,
+        retryCount,
+        firstFailedAt: msg.properties.headers?.["x-first-failed-at"],
+      });
+      channel.nack(msg, false, false);
+      return;
+    }
+
+    // Publish to retry queue with updated headers
+    channel.publish("", RETRY_QUEUE_NAME, msg.content, {
+      headers: {
+        ...msg.properties.headers,
+        "x-retry-count": retryCount + 1,
+        "x-last-error": error,
+        "x-last-failed-at": new Date().toISOString(),
+        "x-first-failed-at":
+          msg.properties.headers?.["x-first-failed-at"] ??
+          new Date().toISOString(),
+        "x-original-routing-key": routingKey,
+      },
+      persistent: true,
+    });
+
+    // Ack original message — sudah dipindah ke retry queue
+    channel.ack(msg);
   }
 };
 
@@ -87,7 +132,24 @@ export const startConsumer = (): ChannelWrapper => {
     json: false,
 
     setup: async (ch: Channel) => {
-      await ch.assertQueue(QUEUE_NAME, { durable: true });
+      // Assert main queue dengan DLX → jika nack tanpa requeue, masuk retry queue
+      await ch.assertQueue(QUEUE_NAME, {
+        durable: true,
+        arguments: {
+          "x-dead-letter-exchange": "",
+          "x-dead-letter-routing-key": RETRY_QUEUE_NAME,
+        },
+      });
+
+      // Assert retry queue dengan TTL → setelah 15 detik, kembali ke main queue
+      await ch.assertQueue(RETRY_QUEUE_NAME, {
+        durable: true,
+        arguments: {
+          "x-message-ttl": RETRY_DELAY_MS,
+          "x-dead-letter-exchange": "",
+          "x-dead-letter-routing-key": QUEUE_NAME,
+        },
+      });
 
       for (const routingKey of ROUTING_KEYS) {
         await ch.bindQueue(QUEUE_NAME, EXCHANGE_NAME, routingKey);
@@ -111,6 +173,9 @@ export const startConsumer = (): ChannelWrapper => {
         queue: QUEUE_NAME,
         exchange: EXCHANGE_NAME,
         bindings: ROUTING_KEYS,
+        retryQueue: RETRY_QUEUE_NAME,
+        retryDelayMs: RETRY_DELAY_MS,
+        maxRetry: MAX_RETRY_COUNT,
       });
     },
   });

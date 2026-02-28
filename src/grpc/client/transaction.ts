@@ -1,6 +1,6 @@
 import transactionPbModule from "@muhammadmiftaa/refina-protobuf/transaction/transaction_pb.js";
-import logger from "../../logger";
-import { transactionType } from "../../dto";
+import logger from "../../utils/logger";
+import { transactionType } from "../../utils/dto";
 import { GRPCClient } from "./client";
 import {
   GRPCClientService,
@@ -8,7 +8,7 @@ import {
   LogGetTransactionsStreamFailed,
   LogGetUserTransactionsStreamCompleted,
   LogGetUserTransactionsStreamFailed,
-} from "../../log";
+} from "../../utils/log";
 
 const tpb =
   (transactionPbModule as any).proto?.transaction || transactionPbModule;
@@ -42,6 +42,7 @@ export class TransactionGRPCClient {
             description: response.getDescription(),
             created_at: response.getCreatedAt(),
             updated_at: response.getUpdatedAt(),
+            attachments: null,
           });
         }
       });
@@ -88,6 +89,7 @@ export class TransactionGRPCClient {
             description: response.getDescription(),
             created_at: response.getCreatedAt(),
             updated_at: response.getUpdatedAt(),
+            attachments: null,
           });
         }
       });

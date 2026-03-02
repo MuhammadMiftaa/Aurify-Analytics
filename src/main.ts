@@ -14,9 +14,12 @@ import { startConsumer } from "./event/consumer/consumer";
 import { closeConnection } from "./event/config";
 import {
   DatabaseService,
+  GRPCServerService,
   HTTPServerService,
   LogDBConnected,
   LogDBConnectFailed,
+  LogGRPCServerShutdown,
+  LogGRPCServerShutdownFailed,
   LogHTTPServerStarted,
   LogHTTPServerClosed,
   LogShutdownStarted,
@@ -24,6 +27,7 @@ import {
   LogUnhandledRejection,
   MainService,
 } from "./utils/log";
+import { startGRPCServer } from "./grpc/server/server";
 
 connect(env.DATABASE_URL)
   .then(() => {
@@ -70,14 +74,16 @@ app.use(middleware.errorHandler);
 
 startConsumer();
 
-const httpServer = app.listen(env.PORT, () => {
+const httpServer = app.listen(env.HTTP_PORT, () => {
   logger.info(LogHTTPServerStarted, {
     service: HTTPServerService,
-    port: env.PORT,
+    port: env.HTTP_PORT,
     env: env.NODE_ENV,
     log_level: env.LOG_LEVEL,
   });
 });
+
+const grpcServer = startGRPCServer(env.GRPC_PORT);
 
 // Graceful shutdown
 const shutdown = async (signal?: string) => {
@@ -87,6 +93,17 @@ const shutdown = async (signal?: string) => {
     await closeConnection();
     logger.info(LogHTTPServerClosed, { service: HTTPServerService });
     process.exit(0);
+  });
+
+  grpcServer.tryShutdown((err?: Error) => {
+    if (err) {
+      logger.error(LogGRPCServerShutdownFailed, {
+        service: GRPCServerService,
+        error: err.message,
+      });
+    } else {
+      logger.info(LogGRPCServerShutdown, { service: GRPCServerService });
+    }
   });
 };
 

@@ -21,8 +21,8 @@ import {
   LogInitialSyncCompleted,
   LogInitialSyncFailed,
   LogInitialSyncForbidden,
-  REQUEST_ID_LOCAL_KEY,
 } from "./utils/log";
+import { initialSync } from "./grpc/client/initSync";
 
 const getUserTransaction = async (
   req: Request,
@@ -135,17 +135,13 @@ const initialSyncHandler = async (
     }
 
     const wallets =
-      (await req.app.locals.walletGRPCClient.getWallets()) as Promise<
-        walletType[]
-      >;
+      (await req.app.locals.walletGRPCClient.getWallets()) as walletType[];
     const transactions =
-      (await req.app.locals.transactionGRPCClient.getTransactions()) as Promise<
-        transactionType[]
-      >;
+      (await req.app.locals.transactionGRPCClient.getTransactions()) as transactionType[];
     const investments =
-      (await req.app.locals.investmentGRPCClient.getInvestments()) as Promise<
-        investmentType[]
-      >;
+      (await req.app.locals.investmentGRPCClient.getInvestments()) as investmentType[];
+    
+    await initialSync(wallets, transactions, investments);
 
     logger.info(LogInitialSyncCompleted, {
       service: AnalyticsService,

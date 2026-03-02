@@ -22,7 +22,7 @@ async function recalcNetWorth(userId: string) {
   const investments = await userInvestmentModel
     .find({ UserID: userId, IsActive: true })
     .lean();
-
+console.log("Investments:", investments);
   let investmentTotal = 0;
   let unrealizedGain = 0;
   const investmentsByAsset = new Map<string, { total: number; gain: number }>();
@@ -63,7 +63,7 @@ async function recalcNetWorth(userId: string) {
       },
     });
   }
-
+  console.log("Investment Total:", investmentTotal);
   if (investmentTotal > 0) {
     const investmentDetails: Record<string, number> = {};
     investmentsByAsset.forEach((d, label) => {

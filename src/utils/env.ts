@@ -31,7 +31,8 @@ function requiredInt(key: string) {
 
 //$ Load all environment variables
 const env = {
-  PORT: requiredInt("PORT"),
+  HTTP_PORT: requiredInt("HTTP_PORT"),
+  GRPC_PORT: requiredInt("GRPC_PORT"),
   NODE_ENV: required("NODE_ENV"),
   DATABASE_URL: required("DATABASE_URL"),
   JWT_SECRET: required("JWT_SECRET"),

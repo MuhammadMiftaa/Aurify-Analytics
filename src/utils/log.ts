@@ -13,6 +13,7 @@ export const MainService = "main";
 export const EnvService = "env";
 export const DatabaseService = "database";
 export const GRPCClientService = "grpc_client";
+export const GRPCServerService = "grpc_server";
 export const HTTPServerService = "http_server";
 export const AnalyticsService = "analytics";
 
@@ -33,6 +34,15 @@ export const LogHTTPServerClosed = "http_server_closed";
 export const LogShutdownStarted = "shutdown_started";
 export const LogUncaughtException = "uncaught_exception";
 export const LogUnhandledRejection = "unhandled_rejection";
+
+// --- grpc server lifecycle ---
+export const LogGRPCServerStarted = "grpc_server_started";
+export const LogGRPCServerBindFailed = "grpc_server_bind_failed";
+export const LogGRPCServerShutdown = "grpc_server_shutdown";
+export const LogGRPCServerShutdownFailed = "grpc_server_shutdown_failed";
+
+// --- grpc server handlers ---
+export const LogGRPCHandlerFailed = "grpc_handler_failed";
 
 // --- http middleware ---
 export const LogAuthMissingHeader = "auth_missing_header";

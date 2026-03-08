@@ -1,0 +1,9 @@
+{"docs_url":"/api-docs","json_url":"/api-docs.json","level":"info","message":"swagger_ui_started","service":"http_server","timestamp":"2026-03-08T08:59:16.328Z","yaml_url":"/api-docs.yaml"}
+{"env":"development","level":"info","log_level":"debug","message":"http_server_started","port":8012,"service":"http_server","timestamp":"2026-03-08T08:59:16.336Z"}
+{"level":"info","message":"grpc_server_started","port":10004,"service":"grpc_server","timestamp":"2026-03-08T08:59:16.343Z"}
+{"level":"info","message":"rabbitmq_connected","service":"rabbitmq","timestamp":"2026-03-08T08:59:16.416Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"wallet.*","service":"rabbitmq_consumer","timestamp":"2026-03-08T08:59:16.445Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"transaction.*","service":"rabbitmq_consumer","timestamp":"2026-03-08T08:59:16.448Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"investment.*","service":"rabbitmq_consumer","timestamp":"2026-03-08T08:59:16.450Z"}
+{"bindings":["wallet.*","transaction.*","investment.*"],"exchange":"refina_microservice","level":"info","maxRetry":4,"message":"consumer_ready","queue":"refina-analytics","retryDelayMs":15000,"retryQueue":"refina-analytics.retry","service":"rabbitmq_consumer","timestamp":"2026-03-08T08:59:16.464Z"}
+{"level":"info","message":"db_connected","service":"database","timestamp":"2026-03-08T08:59:17.848Z"}

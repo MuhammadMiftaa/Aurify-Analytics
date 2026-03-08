@@ -10,8 +10,6 @@ import {
 
 const router = Router();
 
-router.use(middleware.authMiddleware);
-
 router.post(
   "/user-transactions",
   middleware.validate(getUserTransactionSchema),

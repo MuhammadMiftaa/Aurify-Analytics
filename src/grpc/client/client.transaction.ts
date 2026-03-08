@@ -67,50 +67,45 @@ export class TransactionGRPCClient {
 
   getUserTransactions(walletIDs: string[]): Promise<transactionType[]> {
     return new Promise((resolve, reject) => {
-      const request = new tpb.Wallets();
-      request.setWalletIdList(walletIDs);
+      const request = new tpb.GetUserTransactionsRequest();
+      request.setWalletIdsList(walletIDs);
 
-      const transactions: transactionType[] = [];
-
-      const call = this.client
+      this.client
         .getTransactionClient()
-        .getUserTransactions(request);
+        .getUserTransactions(request, (error: any, response: any) => {
+          if (error) {
+            logger.error(LogGetUserTransactionsStreamFailed, {
+              service: GRPCClientService,
+              wallet_ids: walletIDs,
+              error: error.message,
+            });
+            reject(error);
+            return;
+          }
 
-      call.on("data", (response) => {
-        if (response) {
-          transactions.push({
-            id: response.getId(),
-            wallet_id: response.getWalletId(),
-            amount: response.getAmount(),
-            category_id: response.getCategoryId(),
-            category_name: response.getCategoryName(),
-            category_type: response.getCategoryType(),
-            transaction_date: response.getTransactionDate(),
-            description: response.getDescription(),
-            created_at: response.getCreatedAt(),
-            updated_at: response.getUpdatedAt(),
+          const transactions: transactionType[] = (
+            response?.getTransactionsList() ?? []
+          ).map((t: any) => ({
+            id: t.getId(),
+            wallet_id: t.getWalletId(),
+            amount: t.getAmount(),
+            category_id: t.getCategoryId(),
+            category_name: t.getCategoryName(),
+            category_type: t.getCategoryType(),
+            transaction_date: t.getTransactionDate(),
+            description: t.getDescription(),
+            created_at: t.getCreatedAt(),
+            updated_at: t.getUpdatedAt(),
             attachments: null,
+          }));
+
+          logger.info(LogGetUserTransactionsStreamCompleted, {
+            service: GRPCClientService,
+            wallet_ids: walletIDs,
+            count: transactions.length,
           });
-        }
-      });
-
-      call.on("end", () => {
-        logger.info(LogGetUserTransactionsStreamCompleted, {
-          service: GRPCClientService,
-          wallet_ids: walletIDs,
-          count: transactions.length,
+          resolve(transactions);
         });
-        resolve(transactions);
-      });
-
-      call.on("error", (error) => {
-        logger.error(LogGetUserTransactionsStreamFailed, {
-          service: GRPCClientService,
-          wallet_ids: walletIDs,
-          error: error.message,
-        });
-        reject(error);
-      });
     });
   }
 }

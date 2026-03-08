@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Build output
+dist
+build
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Tests
+test
+tests
+*.test.ts
+*.spec.ts
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Docs
+README.md
+README-ID.md
+docs
+*.md
+
+# Misc
+.editorconfig
+.prettierrc
+.eslintrc
+
+# Investment service (sibling service, not needed here)
+investment-service

@@ -35,45 +35,6 @@ const requestIDMiddleware = (
   next();
 };
 
-//$ Extracts user info from token and attaches to req.user
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const requestID = req.requestID;
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      logger.warn(LogAuthMissingHeader, {
-        service: HTTPServerService,
-        request_id: requestID,
-      });
-      throw new UnauthorizedError(ERROR_MESSAGES.TOKEN_REQUIRED);
-    }
-
-    const parts = authHeader.split(" ");
-    if (parts.length !== 2 || parts[0] !== "Bearer") {
-      logger.warn(LogAuthInvalidHeaderFormat, {
-        service: HTTPServerService,
-        request_id: requestID,
-      });
-      throw new UnauthorizedError(ERROR_MESSAGES.TOKEN_INVALID);
-    }
-
-    const token = parts[1];
-    const user = helper.extractAndVerifyJwtClaims(token);
-    req.user = user;
-
-    logger.debug(LogAuthSuccess, {
-      service: HTTPServerService,
-      request_id: requestID,
-      user_id: req.user.id,
-    });
-
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
 //$ Validates request body against Zod schema
 const validate = (schema: ZodType) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -185,7 +146,6 @@ const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
 
 export default {
   requestIDMiddleware,
-  authMiddleware,
   validate,
   requestLogger,
   errorHandler,

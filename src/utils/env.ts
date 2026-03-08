@@ -35,7 +35,6 @@ const env = {
   GRPC_PORT: requiredInt("GRPC_PORT"),
   NODE_ENV: required("NODE_ENV"),
   DATABASE_URL: required("DATABASE_URL"),
-  JWT_SECRET: required("JWT_SECRET"),
   LOG_LEVEL: required("LOG_LEVEL"),
   INITIAL_SYNC_KEY: required("INITIAL_SYNC_KEY"),
   WALLET_ADDRESS: required("WALLET_ADDRESS"),

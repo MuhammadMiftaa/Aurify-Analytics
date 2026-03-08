@@ -169,7 +169,7 @@ export function calculateFinancialSummaries(
 
       userInvestments.forEach((inv) => {
         totalInvested += inv.amount;
-        totalCurrentValuation += inv.quantity * inv.assetCode.toIDR;
+        totalCurrentValuation += inv.quantity * (inv.assetCode.toIDR ?? 0);
         if (inv.amount > 0) buyCount++;
         else sellCount++;
       });

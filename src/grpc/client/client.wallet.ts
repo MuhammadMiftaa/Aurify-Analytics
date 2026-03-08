@@ -68,43 +68,41 @@ export class WalletGRPCClient {
       const request = new wpb.UserID();
       request.setId(userID);
 
-      const wallets: walletType[] = [];
-      const call = this.client.getWalletClient().getUserWallets(request);
+      this.client
+        .getWalletClient()
+        .getUserWallets(request, (error, response) => {
+          if (error) {
+            logger.error(LogGetUserWalletsStreamFailed, {
+              service: GRPCClientService,
+              user_id: userID,
+              error: error.message,
+            });
+            reject(error);
+            return;
+          }
 
-      call.on("data", (response) => {
-        if (response) {
-          wallets.push({
-            id: response.getId(),
-            user_id: response.getUserId(),
-            name: response.getName(),
-            number: response.getNumber(),
-            balance: response.getBalance(),
-            wallet_type_id: response.getWalletTypeId(),
-            wallet_type: response.getWalletType(),
-            wallet_type_name: response.getWalletTypeName(),
-            created_at: response.getCreatedAt(),
-            updated_at: response.getUpdatedAt(),
+          const wallets: walletType[] = (response?.getWalletsList() ?? []).map(
+            (w: any) => ({
+              id: w.getId(),
+              user_id: w.getUserId(),
+              name: w.getName(),
+              number: w.getNumber(),
+              balance: w.getBalance(),
+              wallet_type_id: w.getWalletTypeId(),
+              wallet_type: w.getWalletType(),
+              wallet_type_name: w.getWalletTypeName(),
+              created_at: w.getCreatedAt(),
+              updated_at: w.getUpdatedAt(),
+            }),
+          );
+
+          logger.info(LogGetUserWalletsStreamCompleted, {
+            service: GRPCClientService,
+            user_id: userID,
+            count: wallets.length,
           });
-        }
-      });
-
-      call.on("end", () => {
-        logger.info(LogGetUserWalletsStreamCompleted, {
-          service: GRPCClientService,
-          user_id: userID,
-          count: wallets.length,
+          resolve(wallets);
         });
-        resolve(wallets);
-      });
-
-      call.on("error", (error) => {
-        logger.error(LogGetUserWalletsStreamFailed, {
-          service: GRPCClientService,
-          user_id: userID,
-          error: error.message,
-        });
-        reject(error);
-      });
     });
   }
 }

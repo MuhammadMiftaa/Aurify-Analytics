@@ -50,7 +50,7 @@ export function calculateNetWorthCompositions(
       { total: number; gain: number }
     >();
     investmentsList.forEach((inv) => {
-      const currentValue = inv.quantity * inv.assetCode.toIDR;
+      const currentValue = inv.quantity * (inv.assetCode.toIDR ?? 0);
       investmentTotal += currentValue;
       const gain = currentValue - inv.amount;
       unrealizedGain += gain;

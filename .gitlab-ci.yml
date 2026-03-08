@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/HEAD/app/assets/javascripts/editor/schema/ci.json
+
+stages:
+  - build
+  - release
+  - deploy
+
+variables:
+  TAG_IMAGE: $CI_COMMIT_TAG
+
+build_refina_analytics:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - echo "Building Refina Analytics Backend Application..."
+    - docker build -t "$CI_REGISTRY_IMAGE/refina-analytics:$TAG_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE/refina-analytics:$TAG_IMAGE"
+    - echo "$CI_JOB_ID" > refina-analytics_build_job_id.txt
+  artifacts:
+    paths:
+      - refina-analytics_build_job_id.txt
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: build_refina_analytics
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+  variables:
+    RELEASE_TITLE: "Release ${CI_COMMIT_TAG}"
+    RELEASE_DESC: "Tagged after commit ${CI_COMMIT_SHORT_SHA}, message ${CI_COMMIT_TAG_MESSAGE}"
+  script:
+    - export REFINA_ANALYTICS_JOB_ID="$(cat refina-analytics_build_job_id.txt)"
+    - echo "create release ${CI_COMMIT_TAG} from jobs $REFINA_ANALYTICS_JOB_ID"
+    - release-cli create --name "${RELEASE_TITLE}" --description "${RELEASE_DESC}" --tag-name "${CI_COMMIT_TAG}"
+
+deploy-staging:
+  stage: deploy
+  image: alpine:latest
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+  before_script:
+    - "which ssh-agent || ( apk update && apk add --no-cache openssh)"
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - |
+      ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+        export STG_REFINA_ANALYTICS_IMAGE="$CI_REGISTRY_IMAGE/refina-analytics" &&
+        export STG_REFINA_ANALYTICS_IMAGE_TAG=$TAG_IMAGE &&
+
+        cd ~/web/staging/refinamicroservices &&
+
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+        docker compose -f docker-compose.yml rm -sf stg-refina-analytics &&
+        docker compose -f docker-compose.yml pull stg-refina-analytics &&
+        docker compose -f docker-compose.yml up -d stg-refina-analytics
+      "
+
+deploy-production:
+  stage: deploy
+  image: alpine:latest
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+  before_script:
+    - "which ssh-agent || ( apk update && apk add --no-cache openssh)"
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - |
+      ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} " 
+        export PROD_REFINA_ANALYTICS_IMAGE="$CI_REGISTRY_IMAGE/refina-analytics" &&
+        export PROD_REFINA_ANALYTICS_IMAGE_TAG=$TAG_IMAGE &&
+
+        cd ~/web/production/refinamicroservices &&
+
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+        docker compose -f docker-compose.yml rm -sf prod-refina-analytics &&
+        docker compose -f docker-compose.yml pull prod-refina-analytics &&
+        docker compose -f docker-compose.yml up -d prod-refina-analytics
+      "
+  when: manual

@@ -22,6 +22,7 @@ RUN npm ci
 # Copy source & config
 COPY tsconfig.json ./
 COPY src ./src
+COPY fix-imports.mjs ./
 
 # Compile TypeScript → dist/
 RUN npm run build

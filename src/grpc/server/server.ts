@@ -10,6 +10,10 @@ import {
   LogGRPCServerBindFailed,
   LogGRPCServerStarted,
 } from "../../utils/log.js";
+import {
+  unaryServerInterceptor,
+  logFieldsFromCall,
+} from "../interceptor/userMetadata.js";
 
 const dpb = (dashboardPbModule as any).proto?.dashboard || dashboardPbModule;
 const dgrpc = (dashboardGrpcModule as any).dashboard || dashboardGrpcModule;
@@ -64,7 +68,7 @@ const getUserTransactions: grpc.handleUnaryCall<any, any> = async (
     callback(null, response);
   } catch (error: any) {
     logger.error(LogGRPCHandlerFailed, {
-      service: GRPCServerService,
+      ...logFieldsFromCall(call),
       handler: "getUserTransactions",
       error: error.message,
     });
@@ -123,7 +127,7 @@ const getUserBalance: grpc.handleUnaryCall<any, any> = async (
     callback(null, response);
   } catch (error: any) {
     logger.error(LogGRPCHandlerFailed, {
-      service: GRPCServerService,
+      ...logFieldsFromCall(call),
       handler: "getUserBalance",
       error: error.message,
     });
@@ -280,7 +284,7 @@ const getUserFinancialSummary: grpc.handleUnaryCall<any, any> = async (
     callback(null, response);
   } catch (error: any) {
     logger.error(LogGRPCHandlerFailed, {
-      service: GRPCServerService,
+      ...logFieldsFromCall(call),
       handler: "getUserFinancialSummary",
       error: error.message,
     });
@@ -329,7 +333,7 @@ const getUserNetWorthComposition: grpc.handleUnaryCall<any, any> = async (
     callback(null, response);
   } catch (error: any) {
     logger.error(LogGRPCHandlerFailed, {
-      service: GRPCServerService,
+      ...logFieldsFromCall(call),
       handler: "getUserNetWorthComposition",
       error: error.message,
     });
@@ -385,7 +389,7 @@ const getUserWallets: grpc.handleUnaryCall<any, any> = async (
     callback(null, response);
   } catch (error: any) {
     logger.error(LogGRPCHandlerFailed, {
-      service: GRPCServerService,
+      ...logFieldsFromCall(call),
       handler: "getUserWallets",
       error: error.message,
     });
@@ -404,11 +408,11 @@ export function startGRPCServer(port: string | number): grpc.Server {
   const server = new grpc.Server();
 
   server.addService(dgrpc.DashboardServiceService, {
-    getUserTransactions,
-    getUserBalance,
-    getUserFinancialSummary,
-    getUserNetWorthComposition,
-    getUserWallets,
+    getUserTransactions: unaryServerInterceptor(getUserTransactions),
+    getUserBalance: unaryServerInterceptor(getUserBalance),
+    getUserFinancialSummary: unaryServerInterceptor(getUserFinancialSummary),
+    getUserNetWorthComposition: unaryServerInterceptor(getUserNetWorthComposition),
+    getUserWallets: unaryServerInterceptor(getUserWallets),
   });
 
   server.bindAsync(

@@ -81,7 +81,7 @@ export function logFieldsFromCall(call: any): Record<string, string> {
  * `call.userMetadata` for downstream handlers.
  */
 export function unaryServerInterceptor(
-  handler: (call: any, callback: any) => Promise<void>,
+  handler: (call: any, callback: any) => void | Promise<void>,
 ) {
   return async (call: any, callback: any) => {
     extractUserMetadata(call);
@@ -109,7 +109,7 @@ export function unaryServerInterceptor(
  * For server streaming, the handler signature is (call) — no callback.
  */
 export function serverStreamInterceptor(
-  handler: (call: any) => Promise<void>,
+  handler: (call: any) => void | Promise<void>,
 ) {
   return async (call: any) => {
     extractUserMetadata(call);

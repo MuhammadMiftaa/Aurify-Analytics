@@ -108,15 +108,19 @@ export const walletSchema = z.object({
   wallet_type_id: z.uuid(),
   wallet_type: z.string(),
   wallet_type_name: z.string(),
-  created_at: z.date().optional(),
-  updated_at: z.date().optional(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
 });
 
 export const transactionSchema = z.object({
   id: z.uuid(),
-  wallet_id: z.uuid(),
+  wallet_id: z.uuid({ error: "Invalid wallet ID" }),
   amount: z.number().min(0),
-  category_id: z.uuid(),
+  category_id: z
+    .string()
+    .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, {
+      message: "Invalid category ID format",
+    }),
   category_name: z.string(),
   category_type: z.string(),
   transaction_date: z.coerce.date(),

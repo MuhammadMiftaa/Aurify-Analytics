@@ -1,16 +1,54 @@
 # yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/HEAD/app/assets/javascripts/editor/schema/ci.json
 
 stages:
+  - test
   - build
   - release
   - deploy
 
 variables:
   TAG_IMAGE: $CI_COMMIT_TAG
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+  GIT_DEPTH: "0"
+
+test:
+  stage: test
+  image: node:22-alpine
+  script:
+    - npm ci
+    - npm run test:coverage
+  artifacts:
+    paths:
+      - coverage/lcov.info
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+    - if: $CI_COMMIT_BRANCH == "main"
+  allow_failure: false
+
+sonarcloud-check:
+  stage: test
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  needs:
+    - job: test
+      artifacts: true
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
+  allow_failure: true
 
 build_refina_analytics:
   stage: build
   image: docker:latest
+  needs:
+    - job: sonarcloud-check
   services:
     - docker:dind
   rules:

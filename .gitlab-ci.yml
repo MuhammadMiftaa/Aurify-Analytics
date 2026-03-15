@@ -44,7 +44,7 @@ sonarcloud-check:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/
   allow_failure: true
 
-build_refina_analytics:
+build-refina-analytics:
   stage: build
   image: docker:latest
   needs:
@@ -68,7 +68,7 @@ release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
-    - job: build_refina_analytics
+    - job: build-refina-analytics
       artifacts: true
   rules:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]{4}\.[0-9]{1,3}$/

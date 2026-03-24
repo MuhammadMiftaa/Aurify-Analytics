@@ -1,0 +1,1410 @@
+{
+  "total": 28,
+  "p": 1,
+  "ps": 500,
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 500,
+    "total": 28
+  },
+  "effortTotal": 128,
+  "debtTotal": 128,
+  "issues": [
+    {
+      "key": "AZzwEEvD0K0VPjGG_kxD",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/interceptor/userMetadata.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 1,
+      "hash": "8bb8a4c0bcaa1c529b3164dfb1c2c6ca",
+      "textRange": {
+        "startLine": 1,
+        "endLine": 1,
+        "startOffset": 27,
+        "endOffset": 35
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `node:crypto` over `crypto`.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "import",
+        "nodejs"
+      ],
+      "creationDate": "2026-03-09T09:32:15+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEu50K0VPjGG_kxA",
+      "rule": "typescript:S6582",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/server/server.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 42,
+      "hash": "52185f20b2625c9e478f17a47d0701e6",
+      "textRange": {
+        "startLine": 42,
+        "endLine": 42,
+        "startOffset": 10,
+        "endOffset": 43
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer using an optional chain expression instead, as it's more concise and easier to read.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "type-dependent"
+      ],
+      "creationDate": "2026-03-02T14:43:01+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEu50K0VPjGG_kxB",
+      "rule": "typescript:S6582",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/server/server.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 91,
+      "hash": "52185f20b2625c9e478f17a47d0701e6",
+      "textRange": {
+        "startLine": 91,
+        "endLine": 91,
+        "startOffset": 8,
+        "endOffset": 41
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer using an optional chain expression instead, as it's more concise and easier to read.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "type-dependent"
+      ],
+      "creationDate": "2026-03-02T14:43:01+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEu50K0VPjGG_kxC",
+      "rule": "typescript:S6582",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/server/server.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 150,
+      "hash": "52185f20b2625c9e478f17a47d0701e6",
+      "textRange": {
+        "startLine": 150,
+        "endLine": 150,
+        "startOffset": 8,
+        "endOffset": 41
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer using an optional chain expression instead, as it's more concise and easier to read.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "type-dependent"
+      ],
+      "creationDate": "2026-03-02T14:43:01+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEErr0K0VPjGG_kwz",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/utils/swagger.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 4,
+      "hash": "e6257dc4b1f21417043851734f5ab373",
+      "textRange": {
+        "startLine": 4,
+        "endLine": 4,
+        "startOffset": 15,
+        "endOffset": 19
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `node:fs` over `fs`.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "import",
+        "nodejs"
+      ],
+      "creationDate": "2026-02-28T05:24:29+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEErr0K0VPjGG_kw0",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/utils/swagger.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 5,
+      "hash": "4b6e4e765587d1ad118e965d7d21a315",
+      "textRange": {
+        "startLine": 5,
+        "endLine": 5,
+        "startOffset": 17,
+        "endOffset": 23
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `node:path` over `path`.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "import",
+        "nodejs"
+      ],
+      "creationDate": "2026-02-28T05:24:29+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEErr0K0VPjGG_kw1",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/utils/swagger.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 6,
+      "hash": "837a04de7967ff0613ba16d37ceea8c2",
+      "textRange": {
+        "startLine": 6,
+        "endLine": 6,
+        "startOffset": 30,
+        "endOffset": 35
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `node:url` over `url`.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "import",
+        "nodejs"
+      ],
+      "creationDate": "2026-02-28T05:24:29+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEuK0K0VPjGG_kw8",
+      "rule": "typescript:S2933",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/transaction.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 17,
+      "hash": "640ca6a57168905752d844fafd8b4660",
+      "textRange": {
+        "startLine": 17,
+        "endLine": 17,
+        "startOffset": 2,
+        "endOffset": 16
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Member 'client' is never reassigned; mark it as `readonly`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "confusing",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxE",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 1,
+      "hash": "8bb8a4c0bcaa1c529b3164dfb1c2c6ca",
+      "textRange": {
+        "startLine": 1,
+        "endLine": 1,
+        "startOffset": 27,
+        "endOffset": 35
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `node:crypto` over `crypto`.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "import",
+        "nodejs"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxI",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 11,
+      "hash": "7aaf91d42975e1eddcefce7bd87861d7",
+      "textRange": {
+        "startLine": 11,
+        "endLine": 11,
+        "startOffset": 2,
+        "endOffset": 28
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'LogAuthInvalidHeaderFormat'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxJ",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 12,
+      "hash": "401a3442908404fd30781dca1da074c9",
+      "textRange": {
+        "startLine": 12,
+        "endLine": 12,
+        "startOffset": 2,
+        "endOffset": 22
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'LogAuthMissingHeader'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxK",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 13,
+      "hash": "a36a15a9569078360db2c1b9a7351631",
+      "textRange": {
+        "startLine": 13,
+        "endLine": 13,
+        "startOffset": 2,
+        "endOffset": 16
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'LogAuthSuccess'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxL",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 19,
+      "hash": "4990bb2246db07c3e993f240b8cc1cd5",
+      "textRange": {
+        "startLine": 19,
+        "endLine": 19,
+        "startOffset": 2,
+        "endOffset": 22
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'REQUEST_ID_LOCAL_KEY'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxM",
+      "rule": "typescript:S7773",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 79,
+      "hash": "caa4a7b580b4aeee83e77119e5a2bc92",
+      "textRange": {
+        "startLine": 79,
+        "endLine": 79,
+        "startOffset": 10,
+        "endOffset": 18
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `Number.parseInt` over `parseInt`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "es2015"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        },
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxN",
+      "rule": "typescript:S7773",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 81,
+      "hash": "5f35fa552739b5ee55fbd510c8302cbc",
+      "textRange": {
+        "startLine": 81,
+        "endLine": 81,
+        "startOffset": 21,
+        "endOffset": 29
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `Number.parseInt` over `parseInt`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "es2015"
+      ],
+      "creationDate": "2026-02-28T04:53:24+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        },
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEuu0K0VPjGG_kw_",
+      "rule": "typescript:S2933",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/client.transaction.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 17,
+      "hash": "640ca6a57168905752d844fafd8b4660",
+      "textRange": {
+        "startLine": 17,
+        "endLine": 17,
+        "startOffset": 2,
+        "endOffset": 16
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Member 'client' is never reassigned; mark it as `readonly`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "confusing",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEt20K0VPjGG_kw4",
+      "rule": "typescript:S2871",
+      "severity": "CRITICAL",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 52,
+      "hash": "20ca27a8f2582ee2f65f36ae660b7a6e",
+      "textRange": {
+        "startLine": 52,
+        "endLine": 52,
+        "startOffset": 54,
+        "endOffset": 58
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Provide a compare function that depends on \"String.localeCompare\", to reliably sort elements alphabetically.",
+      "effort": "10min",
+      "debt": "10min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "bad-practice",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "BUG",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEt20K0VPjGG_kw5",
+      "rule": "typescript:S2004",
+      "severity": "CRITICAL",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 207,
+      "hash": "f1ecf9c2054ea4e9cb4cac7e232c9c26",
+      "textRange": {
+        "startLine": 207,
+        "endLine": 207,
+        "startOffset": 15,
+        "endOffset": 17
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 3,
+                "endLine": 3,
+                "startOffset": 16,
+                "endOffset": 43
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 51,
+                "endLine": 51,
+                "startOffset": 44,
+                "endOffset": 46
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 54,
+                "endLine": 54,
+                "startOffset": 43,
+                "endOffset": 45
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 205,
+                "endLine": 205,
+                "startOffset": 55,
+                "endOffset": 57
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        }
+      ],
+      "status": "OPEN",
+      "message": "Refactor this code to not nest functions more than 4 levels deep.",
+      "effort": "20min",
+      "debt": "20min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "brain-overload"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "FOCUSED",
+      "cleanCodeAttributeCategory": "ADAPTABLE",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEt20K0VPjGG_kw6",
+      "rule": "typescript:S2004",
+      "severity": "CRITICAL",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 212,
+      "hash": "5c941d1003779d205e86ce2a405a9db9",
+      "textRange": {
+        "startLine": 212,
+        "endLine": 212,
+        "startOffset": 31,
+        "endOffset": 33
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 3,
+                "endLine": 3,
+                "startOffset": 16,
+                "endOffset": 43
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 51,
+                "endLine": 51,
+                "startOffset": 44,
+                "endOffset": 46
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 54,
+                "endLine": 54,
+                "startOffset": 43,
+                "endOffset": 45
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+              "textRange": {
+                "startLine": 205,
+                "endLine": 205,
+                "startOffset": 55,
+                "endOffset": 57
+              },
+              "msg": "Nesting +1"
+            }
+          ]
+        }
+      ],
+      "status": "OPEN",
+      "message": "Refactor this code to not nest functions more than 4 levels deep.",
+      "effort": "20min",
+      "debt": "20min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "brain-overload"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "FOCUSED",
+      "cleanCodeAttributeCategory": "ADAPTABLE",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEuY0K0VPjGG_kw9",
+      "rule": "typescript:S2871",
+      "severity": "CRITICAL",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.userBalances.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 39,
+      "hash": "895f171a54be4c37bf29bf4e2bfb2647",
+      "textRange": {
+        "startLine": 39,
+        "endLine": 39,
+        "startOffset": 51,
+        "endOffset": 55
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Provide a compare function that depends on \"String.localeCompare\", to reliably sort elements alphabetically.",
+      "effort": "10min",
+      "debt": "10min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "bad-practice",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "BUG",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxF",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 4,
+      "hash": "f6a8e86217a7cd6a237fdb499aa24609",
+      "textRange": {
+        "startLine": 4,
+        "endLine": 4,
+        "startOffset": 9,
+        "endOffset": 26
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'UnauthorizedError'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxG",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 7,
+      "hash": "c2cfc1c9fc6cd3d71321c71ce19cb2c2",
+      "textRange": {
+        "startLine": 7,
+        "endLine": 7,
+        "startOffset": 7,
+        "endOffset": 13
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'helper'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvM0K0VPjGG_kxH",
+      "rule": "typescript:S1128",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 8,
+      "hash": "0366113c50e80bfb7f502f5cd65423eb",
+      "textRange": {
+        "startLine": 8,
+        "endLine": 8,
+        "startOffset": 9,
+        "endOffset": 22
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unused import of 'errorResponse'.",
+      "effort": "1min",
+      "debt": "1min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "es2015",
+        "type-dependent",
+        "unused"
+      ],
+      "creationDate": "2026-02-20T08:32:45+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEuh0K0VPjGG_kw-",
+      "rule": "typescript:S2933",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/client.investment.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 16,
+      "hash": "640ca6a57168905752d844fafd8b4660",
+      "textRange": {
+        "startLine": 16,
+        "endLine": 16,
+        "startOffset": 2,
+        "endOffset": 16
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Member 'client' is never reassigned; mark it as `readonly`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "confusing",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-15T12:13:21+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEuA0K0VPjGG_kw7",
+      "rule": "typescript:S2933",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/grpc/client/client.wallet.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 17,
+      "hash": "640ca6a57168905752d844fafd8b4660",
+      "textRange": {
+        "startLine": 17,
+        "endLine": 17,
+        "startOffset": 2,
+        "endOffset": 16
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Member 'client' is never reassigned; mark it as `readonly`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "confusing",
+        "type-dependent"
+      ],
+      "creationDate": "2026-02-15T00:28:22+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CLEAR",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEvX0K0VPjGG_kxO",
+      "rule": "typescript:S7785",
+      "severity": "MAJOR",
+      "component": "aurify-backend_Aurify-Analytics:src/main.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 36,
+      "hash": "f90364da7e44dc427ccb93e883b5b013",
+      "textRange": {
+        "startLine": 36,
+        "endLine": 36,
+        "startOffset": 3,
+        "endOffset": 8
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer top-level await over using a promise chain.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "async",
+        "es2022",
+        "modernize"
+      ],
+      "creationDate": "2026-02-15T00:28:22+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEtk0K0VPjGG_kw2",
+      "rule": "typescript:S7773",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/utils/env.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 24,
+      "hash": "69a4bdf513f05043770fa6f944588a8a",
+      "textRange": {
+        "startLine": 24,
+        "endLine": 24,
+        "startOffset": 17,
+        "endOffset": 25
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `Number.parseInt` over `parseInt`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "es2015"
+      ],
+      "creationDate": "2026-02-12T14:04:59+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        },
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    },
+    {
+      "key": "AZzwEEtk0K0VPjGG_kw3",
+      "rule": "typescript:S7773",
+      "severity": "MINOR",
+      "component": "aurify-backend_Aurify-Analytics:src/utils/env.ts",
+      "project": "aurify-backend_Aurify-Analytics",
+      "line": 25,
+      "hash": "60d6a6ccab51aafb44a195fc020fd684",
+      "textRange": {
+        "startLine": 25,
+        "endLine": 25,
+        "startOffset": 6,
+        "endOffset": 11
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Prefer `Number.isNaN` over `isNaN`.",
+      "effort": "2min",
+      "debt": "2min",
+      "author": "madmifta77@gmail.com",
+      "tags": [
+        "convention",
+        "es2015"
+      ],
+      "creationDate": "2026-02-12T14:04:59+0000",
+      "updateDate": "2026-03-15T05:54:44+0000",
+      "type": "CODE_SMELL",
+      "organization": "aurify-backend",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        },
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "Aurify-Analytics",
+      "internalTags": []
+    }
+  ],
+  "components": [
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/main.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwu",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "main.ts",
+      "longName": "src/main.ts",
+      "path": "src/main.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.UserFinancialSummaries.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwb",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "initSync.UserFinancialSummaries.ts",
+      "longName": "src/grpc/client/initSync.UserFinancialSummaries.ts",
+      "path": "src/grpc/client/initSync.UserFinancialSummaries.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/initSync.userBalances.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwi",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "initSync.userBalances.ts",
+      "longName": "src/grpc/client/initSync.userBalances.ts",
+      "path": "src/grpc/client/initSync.userBalances.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/utils/env.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwI",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "env.ts",
+      "longName": "src/utils/env.ts",
+      "path": "src/utils/env.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/client.investment.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwk",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "client.investment.ts",
+      "longName": "src/grpc/client/client.investment.ts",
+      "path": "src/grpc/client/client.investment.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/client.transaction.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwl",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "client.transaction.ts",
+      "longName": "src/grpc/client/client.transaction.ts",
+      "path": "src/grpc/client/client.transaction.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/client.wallet.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwe",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "client.wallet.ts",
+      "longName": "src/grpc/client/client.wallet.ts",
+      "path": "src/grpc/client/client.wallet.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics",
+      "uuid": "AZzmI4RDx7FiZgjBazrY",
+      "enabled": true,
+      "qualifier": "TRK",
+      "name": "Aurify-Analytics",
+      "longName": "Aurify-Analytics"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/client/transaction.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwf",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "transaction.ts",
+      "longName": "src/grpc/client/transaction.ts",
+      "path": "src/grpc/client/transaction.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/utils/swagger.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwH",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "swagger.ts",
+      "longName": "src/utils/swagger.ts",
+      "path": "src/utils/swagger.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/middleware.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kws",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "middleware.ts",
+      "longName": "src/middleware.ts",
+      "path": "src/middleware.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/server/server.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwn",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "server.ts",
+      "longName": "src/grpc/server/server.ts",
+      "path": "src/grpc/server/server.ts"
+    },
+    {
+      "organization": "aurify-backend",
+      "key": "aurify-backend_Aurify-Analytics:src/grpc/interceptor/userMetadata.ts",
+      "uuid": "AZzwEETy0K0VPjGG_kwp",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "userMetadata.ts",
+      "longName": "src/grpc/interceptor/userMetadata.ts",
+      "path": "src/grpc/interceptor/userMetadata.ts"
+    }
+  ],
+  "organizations": [
+    {
+      "key": "aurify-backend",
+      "name": "Aurify Backend"
+    }
+  ],
+  "facets": []
+}

@@ -1,9 +1,9 @@
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
 import YAML from "yaml";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import logger from "./logger";
 import { HTTPServerService, LogSwaggerUIStarted } from "./log";
 

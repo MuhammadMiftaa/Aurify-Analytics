@@ -21,8 +21,8 @@ function requiredInt(key: string) {
     missing.push(`${key} env is not set`);
     return 0;
   }
-  const parsed = parseInt(value, 10);
-  if (isNaN(parsed)) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) {
     missing.push(`${key} must be number, got "${value}"`);
     return 0;
   }

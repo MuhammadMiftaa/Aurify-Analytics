@@ -14,7 +14,7 @@ const tpb =
   (transactionPbModule as any).proto?.transaction || transactionPbModule;
 
 export class TransactionGRPCClient {
-  private client: GRPCClient;
+  private readonly client: GRPCClient;
 
   constructor(client: GRPCClient) {
     this.client = client;

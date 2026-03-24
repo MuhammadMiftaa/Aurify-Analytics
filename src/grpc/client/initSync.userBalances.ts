@@ -36,7 +36,10 @@ export function calculateDailyBalances(
   // Calculate daily balances for each wallet
   walletTransactions.forEach((dateMap, walletId) => {
     const wallet = walletMap.get(walletId)!;
-    const sortedDates = Array.from(dateMap.keys()).sort();
+    // S2871 fix: provide localeCompare-based compare function for reliable alphabetical sort
+    const sortedDates = Array.from(dateMap.keys()).sort((a, b) =>
+      a.localeCompare(b),
+    );
 
     let runningBalance = wallet.balance;
     let cumulativeIncome = 0;

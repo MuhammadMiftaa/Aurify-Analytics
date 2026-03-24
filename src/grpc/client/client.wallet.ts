@@ -14,7 +14,7 @@ import {
 const wpb = (walletPbModule as any).proto?.wallet || walletPbModule;
 
 export class WalletGRPCClient {
-  private client: GRPCClient;
+  private readonly client: GRPCClient;
 
   constructor(client: GRPCClient) {
     this.client = client;

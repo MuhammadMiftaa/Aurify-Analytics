@@ -13,7 +13,7 @@ import {
 const ipb = (investmentPbModule as any).proto?.investment || investmentPbModule;
 
 export class InvestmentGRPCClient {
-  private client: GRPCClient;
+  private readonly client: GRPCClient;
 
   constructor(client: GRPCClient) {
     this.client = client;

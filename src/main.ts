@@ -29,17 +29,17 @@ import {
 } from "./utils/log";
 import { startGRPCServer } from "./grpc/server/server";
 
-connect(env.DATABASE_URL)
-  .then(() => {
-    logger.info(LogDBConnected, { service: DatabaseService });
-  })
-  .catch((error) => {
-    logger.error(LogDBConnectFailed, {
-      service: DatabaseService,
-      error: error.message,
-    });
-    process.exit(1);
+// S7785 fix: prefer top-level await over promise chain
+try {
+  await connect(env.DATABASE_URL);
+  logger.info(LogDBConnected, { service: DatabaseService });
+} catch (error: any) {
+  logger.error(LogDBConnectFailed, {
+    service: DatabaseService,
+    error: error.message,
   });
+  process.exit(1);
+}
 
 const app = express();
 

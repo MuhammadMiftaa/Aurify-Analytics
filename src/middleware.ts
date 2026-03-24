@@ -1,22 +1,16 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { NextFunction, Request, Response } from "express";
 import logger from "./utils/logger";
-import { UnauthorizedError, ValidationError } from "./utils/errors";
+import { ValidationError } from "./utils/errors";
 import { ERROR_MESSAGES } from "./utils/constant";
 import { ZodType } from "zod";
-import helper from "./utils/helper";
-import { errorResponse } from "./utils/response";
 import {
   HTTPServerService,
-  LogAuthInvalidHeaderFormat,
-  LogAuthMissingHeader,
-  LogAuthSuccess,
   LogRequestCompleted,
   LogRouteNotFound,
   LogUnexpectedError,
   LogValidationFailed,
   REQUEST_ID_HEADER,
-  REQUEST_ID_LOCAL_KEY,
 } from "./utils/log";
 
 //$ Generates / propagates a unique request ID per HTTP request.
@@ -76,9 +70,9 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
       client_ip: req.ip,
       user_agent: req.headers["user-agent"] || "",
       request_size: req.headers["content-length"]
-        ? parseInt(req.headers["content-length"] as string, 10)
+        ? Number.parseInt(req.headers["content-length"], 10)
         : 0,
-      response_size: parseInt(
+      response_size: Number.parseInt(
         (res.getHeader("content-length") as string) || "0",
         10,
       ),

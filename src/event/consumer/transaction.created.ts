@@ -61,6 +61,7 @@ export const handleTransactionCreated: EventHandler = async (
             ID: transaction.id,
             Description: transaction.description,
             Date: txDate,
+            Amount: transaction.amount,
           },
         },
         $set: {

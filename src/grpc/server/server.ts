@@ -37,8 +37,7 @@ async function handleGetUserTransactions(
     if (grpcDateOption.getDate())
       dateOption.date = new Date(grpcDateOption.getDate());
     if (grpcDateOption.getYear()) dateOption.year = grpcDateOption.getYear();
-    if (grpcDateOption.getMonth())
-      dateOption.month = grpcDateOption.getMonth();
+    if (grpcDateOption.getMonth()) dateOption.month = grpcDateOption.getMonth();
     if (grpcDateOption.getDay()) dateOption.day = grpcDateOption.getDay();
     const grpcRange = grpcDateOption.getRange();
     if (grpcRange?.getStart()) {
@@ -68,7 +67,10 @@ async function handleGetUserTransactions(
   callback(null, response);
 }
 
-const getUserTransactions: grpc.handleUnaryCall<any, any> = (call, callback) => {
+const getUserTransactions: grpc.handleUnaryCall<any, any> = (
+  call,
+  callback,
+) => {
   handleGetUserTransactions(call, callback).catch((error: any) => {
     logger.error(LogGRPCHandlerFailed, {
       ...logFieldsFromCall(call),
@@ -116,9 +118,7 @@ async function handleGetUserBalance(
     s.setTotalIncome(snap.TotalIncome || 0);
     s.setTotalExpense(snap.TotalExpense || 0);
     s.setNetChange(snap.NetChange || 0);
-    s.setTransactionCount(
-      snap.TransactionCount || snap.TotalTransactions || 0,
-    );
+    s.setTransactionCount(snap.TransactionCount || snap.TotalTransactions || 0);
     return s;
   });
   response.setSnapshotsList(snapshots);
@@ -163,7 +163,9 @@ async function handleGetUserFinancialSummary(
     fs.setUserId(s.UserID || "");
     fs.setPeriodType(s.PeriodType || "");
     fs.setPeriodKey(s.PeriodKey || "");
-    fs.setPeriodStart(s.PeriodStart ? new Date(s.PeriodStart).toISOString() : "");
+    fs.setPeriodStart(
+      s.PeriodStart ? new Date(s.PeriodStart).toISOString() : "",
+    );
     fs.setPeriodEnd(s.PeriodEnd ? new Date(s.PeriodEnd).toISOString() : "");
     fs.setIncomeNow(s.IncomeNow || 0);
     fs.setExpenseNow(s.ExpenseNow || 0);
@@ -192,7 +194,9 @@ async function handleGetUserFinancialSummary(
     if (s.InvestmentSummary) {
       const inv = new dpb.InvestmentSummary();
       inv.setTotalInvested(s.InvestmentSummary.TotalInvested || 0);
-      inv.setTotalCurrentValuation(s.InvestmentSummary.TotalCurrentValuation || 0);
+      inv.setTotalCurrentValuation(
+        s.InvestmentSummary.TotalCurrentValuation || 0,
+      );
       inv.setTotalSoldAmount(s.InvestmentSummary.TotalSoldAmount || 0);
       inv.setTotalDeficit(s.InvestmentSummary.TotalDeficit || 0);
       inv.setUnrealizedGain(s.InvestmentSummary.UnrealizedGain || 0);
@@ -258,7 +262,10 @@ async function handleGetUserFinancialSummary(
   callback(null, response);
 }
 
-const getUserFinancialSummary: grpc.handleUnaryCall<any, any> = (call, callback) => {
+const getUserFinancialSummary: grpc.handleUnaryCall<any, any> = (
+  call,
+  callback,
+) => {
   handleGetUserFinancialSummary(call, callback).catch((error: any) => {
     logger.error(LogGRPCHandlerFailed, {
       ...logFieldsFromCall(call),
@@ -305,7 +312,10 @@ async function handleGetUserNetWorthComposition(
   callback(null, response);
 }
 
-const getUserNetWorthComposition: grpc.handleUnaryCall<any, any> = (call, callback) => {
+const getUserNetWorthComposition: grpc.handleUnaryCall<any, any> = (
+  call,
+  callback,
+) => {
   handleGetUserNetWorthComposition(call, callback).catch((error: any) => {
     logger.error(LogGRPCHandlerFailed, {
       ...logFieldsFromCall(call),
@@ -387,8 +397,7 @@ async function handleGetCategoryTransactions(
     if (grpcDateOption.getDate())
       dateOption.date = new Date(grpcDateOption.getDate());
     if (grpcDateOption.getYear()) dateOption.year = grpcDateOption.getYear();
-    if (grpcDateOption.getMonth())
-      dateOption.month = grpcDateOption.getMonth();
+    if (grpcDateOption.getMonth()) dateOption.month = grpcDateOption.getMonth();
     if (grpcDateOption.getDay()) dateOption.day = grpcDateOption.getDay();
     const grpcRange = grpcDateOption.getRange();
     if (grpcRange?.getStart()) {
@@ -404,24 +413,36 @@ async function handleGetCategoryTransactions(
     categoryID: req.getCategoryId(),
     dateOption: dateOption,
   });
+
   const response = new dpb.GetCategoryTransactionsResponse();
-  const transactions = (result || []).map((tx: any) => {
+
+  // Handle null result
+  if (!result) {
+    response.setTransactionsList([]);
+    callback(null, response);
+    return;
+  }
+
+  logger.debug("DEBUG: ", { result: result?.Transactions });
+  const transactions = (result?.Transactions || []).map((tx: any) => {
     const t = new dpb.CategoryTransactionItem();
-    t.setId(tx.ID || tx.id || "");
-    t.setDescription(tx.Description || tx.description || "");
-    t.setAmount(tx.Amount || tx.amount || 0);
+    t.setTransactionId(tx.TransactionID || "");
+    t.setDescription(tx.Description || "");
+    t.setAmount(tx.Amount || 0);
     t.setTransactionDate(
-      tx.TransactionDate
-        ? new Date(tx.TransactionDate).toISOString()
-        : tx.transaction_date || "",
+      tx.TransactionDate ? new Date(tx.TransactionDate).toISOString() : "",
     );
+    t.setWalletName(tx.WalletName || "");
     return t;
   });
   response.setTransactionsList(transactions);
   callback(null, response);
 }
 
-const getCategoryTransactions: grpc.handleUnaryCall<any, any> = (call, callback) => {
+const getCategoryTransactions: grpc.handleUnaryCall<any, any> = (
+  call,
+  callback,
+) => {
   handleGetCategoryTransactions(call, callback).catch((error: any) => {
     logger.error(LogGRPCHandlerFailed, {
       ...logFieldsFromCall(call),
@@ -444,7 +465,9 @@ export function startGRPCServer(port: string | number): grpc.Server {
     getUserTransactions: unaryServerInterceptor(getUserTransactions),
     getUserBalance: unaryServerInterceptor(getUserBalance),
     getUserFinancialSummary: unaryServerInterceptor(getUserFinancialSummary),
-    getUserNetWorthComposition: unaryServerInterceptor(getUserNetWorthComposition),
+    getUserNetWorthComposition: unaryServerInterceptor(
+      getUserNetWorthComposition,
+    ),
     getUserWallets: unaryServerInterceptor(getUserWallets),
     getCategoryTransactions: unaryServerInterceptor(getCategoryTransactions),
   });

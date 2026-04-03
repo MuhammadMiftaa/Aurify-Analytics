@@ -59,6 +59,7 @@ async function handleGetUserTransactions(
     c.setCategoryId(cat.CategoryID || "");
     c.setCategoryName(cat.CategoryName || "");
     c.setCategoryType(cat.CategoryType || "");
+    c.setParentCategoryName(cat.ParentCategoryName || "");
     c.setTotalAmount(cat.TotalAmount || 0);
     c.setTotalTransactions(cat.TotalTransactions || 0);
     return c;
@@ -373,6 +374,67 @@ const getUserWallets: grpc.handleUnaryCall<any, any> = (call, callback) => {
   });
 };
 
+// ── GetCategoryTransactions ──
+
+async function handleGetCategoryTransactions(
+  call: grpc.ServerUnaryCall<any, any>,
+  callback: grpc.sendUnaryData<any>,
+): Promise<void> {
+  const req = call.request;
+  const dateOption: any = {};
+  const grpcDateOption = req.getDateOption();
+  if (grpcDateOption) {
+    if (grpcDateOption.getDate())
+      dateOption.date = new Date(grpcDateOption.getDate());
+    if (grpcDateOption.getYear()) dateOption.year = grpcDateOption.getYear();
+    if (grpcDateOption.getMonth())
+      dateOption.month = grpcDateOption.getMonth();
+    if (grpcDateOption.getDay()) dateOption.day = grpcDateOption.getDay();
+    const grpcRange = grpcDateOption.getRange();
+    if (grpcRange?.getStart()) {
+      dateOption.range = {
+        start: new Date(grpcRange.getStart()),
+        end: new Date(grpcRange.getEnd()),
+      };
+    }
+  }
+  const result = await service.getCategoryTransactions({
+    userID: req.getUserId(),
+    walletID: req.getWalletId() || undefined,
+    categoryID: req.getCategoryId(),
+    dateOption: dateOption,
+  });
+  const response = new dpb.GetCategoryTransactionsResponse();
+  const transactions = (result || []).map((tx: any) => {
+    const t = new dpb.CategoryTransactionItem();
+    t.setId(tx.ID || tx.id || "");
+    t.setDescription(tx.Description || tx.description || "");
+    t.setAmount(tx.Amount || tx.amount || 0);
+    t.setTransactionDate(
+      tx.TransactionDate
+        ? new Date(tx.TransactionDate).toISOString()
+        : tx.transaction_date || "",
+    );
+    return t;
+  });
+  response.setTransactionsList(transactions);
+  callback(null, response);
+}
+
+const getCategoryTransactions: grpc.handleUnaryCall<any, any> = (call, callback) => {
+  handleGetCategoryTransactions(call, callback).catch((error: any) => {
+    logger.error(LogGRPCHandlerFailed, {
+      ...logFieldsFromCall(call),
+      handler: "getCategoryTransactions",
+      error: error.message,
+    });
+    callback({
+      code: grpc.status.INTERNAL,
+      message: error.message || "Internal server error",
+    });
+  });
+};
+
 // ═══════════════════════════════════════════════
 // Server Setup
 // ═══════════════════════════════════════════════
@@ -384,6 +446,7 @@ export function startGRPCServer(port: string | number): grpc.Server {
     getUserFinancialSummary: unaryServerInterceptor(getUserFinancialSummary),
     getUserNetWorthComposition: unaryServerInterceptor(getUserNetWorthComposition),
     getUserWallets: unaryServerInterceptor(getUserWallets),
+    getCategoryTransactions: unaryServerInterceptor(getCategoryTransactions),
   });
   server.bindAsync(
     `0.0.0.0:${port}`,

@@ -6,6 +6,7 @@ import {
   getUserTransactionSchema,
   getUserFinancialSummarySchema,
   getUserNetWorthCompositionSchema,
+  getCategoryTransactionsSchema,
 } from "./utils/dto";
 
 const router = Router();
@@ -29,6 +30,11 @@ router.post(
   "/user-net-worth-composition",
   middleware.validate(getUserNetWorthCompositionSchema),
   handler.getUserNetWorthComposition,
+);
+router.post(
+  "/category-transactions",
+  middleware.validate(getCategoryTransactionsSchema),
+  handler.getCategoryTransactions,
 );
 
 export default router;

@@ -67,6 +67,24 @@ export const getUserTransactionSchema = z.object({
   }),
 });
 
+export const getCategoryTransactionsSchema = z.object({
+  userID: z.string(),
+  categoryID: z.string(),
+  walletID: z.string().optional(),
+  dateOption: z.object({
+    date: z.coerce.date().optional(),
+    year: z.number().int().min(1900).max(2100).optional(),
+    month: monthSchema.optional(),
+    day: daySchema.optional(),
+    range: z
+      .object({
+        start: z.coerce.date().optional(),
+        end: z.coerce.date().optional(),
+      })
+      .optional(),
+  }),
+});
+
 export const getUserBalanceSchema = z.object({
   userID: z.string(),
   walletID: z.string().optional(),
@@ -123,6 +141,7 @@ export const transactionSchema = z.object({
     }),
   category_name: z.string(),
   category_type: z.string(),
+  parent_category_name: z.string().optional().default(""),
   transaction_date: z.coerce.date(),
   description: z.string(),
   created_at: z.coerce.date().optional(),
@@ -184,6 +203,9 @@ export const investmentSchema = investmentBuySchema;
 
 //$ Infer types from schemas
 export type getUserTransactionType = z.infer<typeof getUserTransactionSchema>;
+export type getCategoryTransactionsType = z.infer<
+  typeof getCategoryTransactionsSchema
+>;
 export type getUserBalanceType = z.infer<typeof getUserBalanceSchema>;
 export type getUserFinancialSummaryType = z.infer<
   typeof getUserFinancialSummarySchema

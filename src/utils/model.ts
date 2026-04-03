@@ -12,6 +12,7 @@ const userTransaction: Schema = new Schema({
   CategoryID: { type: String, required: true },
   CategoryName: String,
   CategoryType: { type: String, enum: ["income", "expense"] },
+  ParentCategoryName: String, // Parent category name for grouping
 
   // Time dimensions — all Number for consistent sort/group
   Date: { type: Date, required: true },
@@ -27,6 +28,7 @@ const userTransaction: Schema = new Schema({
       ID: String,
       Description: String,
       Date: Date,
+      Amount: Number,
     },
   ],
 

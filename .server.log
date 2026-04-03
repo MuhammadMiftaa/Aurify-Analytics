@@ -45,3 +45,26 @@
 {"level":"info","message":"shutdown_started","service":"main","timestamp":"2026-03-15T05:21:11.216Z"}
 {"level":"info","message":"grpc_server_shutdown","service":"grpc_server","timestamp":"2026-03-15T05:21:11.218Z"}
 {"level":"warn","message":"channel_closed","service":"rabbitmq_consumer","timestamp":"2026-03-15T05:21:11.228Z"}
+{"level":"info","message":"db_connected","service":"database","timestamp":"2026-04-01T13:07:37.143Z"}
+{"docs_url":"/api-docs","json_url":"/api-docs.json","level":"info","message":"swagger_ui_started","service":"http_server","timestamp":"2026-04-01T13:07:37.330Z","yaml_url":"/api-docs.yaml"}
+{"env":"development","level":"info","log_level":"debug","message":"http_server_started","port":8012,"service":"http_server","timestamp":"2026-04-01T13:07:37.413Z"}
+{"level":"info","message":"grpc_server_started","port":10004,"service":"grpc_server","timestamp":"2026-04-01T13:07:37.461Z"}
+{"level":"info","message":"rabbitmq_connected","service":"rabbitmq","timestamp":"2026-04-01T13:07:37.549Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"wallet.*","service":"rabbitmq_consumer","timestamp":"2026-04-01T13:07:37.576Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"transaction.*","service":"rabbitmq_consumer","timestamp":"2026-04-01T13:07:37.581Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"investment.*","service":"rabbitmq_consumer","timestamp":"2026-04-01T13:07:37.591Z"}
+{"bindings":["wallet.*","transaction.*","investment.*"],"exchange":"refina_microservice","level":"info","maxRetry":4,"message":"consumer_ready","queue":"refina-analytics","retryDelayMs":15000,"retryQueue":"refina-analytics.retry","service":"rabbitmq_consumer","timestamp":"2026-04-01T13:07:37.614Z"}
+{"error":"Connection closed: 320 (CONNECTION-FORCED) with message \"CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'\"","level":"warn","message":"rabbitmq_disconnected","service":"rabbitmq","timestamp":"2026-04-01T14:25:11.620Z"}
+{"level":"info","message":"shutdown_started","service":"main","timestamp":"2026-04-01T14:25:12.030Z"}
+{"level":"info","message":"db_connected","service":"database","timestamp":"2026-04-02T12:51:29.934Z"}
+{"docs_url":"/api-docs","json_url":"/api-docs.json","level":"info","message":"swagger_ui_started","service":"http_server","timestamp":"2026-04-02T12:51:29.951Z","yaml_url":"/api-docs.yaml"}
+{"env":"development","level":"info","log_level":"debug","message":"http_server_started","port":8012,"service":"http_server","timestamp":"2026-04-02T12:51:29.963Z"}
+{"level":"info","message":"grpc_server_started","port":10004,"service":"grpc_server","timestamp":"2026-04-02T12:51:29.968Z"}
+{"level":"info","message":"rabbitmq_connected","service":"rabbitmq","timestamp":"2026-04-02T12:51:30.026Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"wallet.*","service":"rabbitmq_consumer","timestamp":"2026-04-02T12:51:30.126Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"transaction.*","service":"rabbitmq_consumer","timestamp":"2026-04-02T12:51:30.133Z"}
+{"exchange":"refina_microservice","level":"info","message":"queue_bound","queue":"refina-analytics","routingKey":"investment.*","service":"rabbitmq_consumer","timestamp":"2026-04-02T12:51:30.135Z"}
+{"bindings":["wallet.*","transaction.*","investment.*"],"exchange":"refina_microservice","level":"info","maxRetry":4,"message":"consumer_ready","queue":"refina-analytics","retryDelayMs":15000,"retryQueue":"refina-analytics.retry","service":"rabbitmq_consumer","timestamp":"2026-04-02T12:51:30.146Z"}
+{"level":"info","message":"shutdown_started","service":"main","timestamp":"2026-04-02T13:47:07.719Z"}
+{"level":"info","message":"grpc_server_shutdown","service":"grpc_server","timestamp":"2026-04-02T13:47:07.973Z"}
+{"level":"warn","message":"channel_closed","service":"rabbitmq_consumer","timestamp":"2026-04-02T13:47:08.172Z"}

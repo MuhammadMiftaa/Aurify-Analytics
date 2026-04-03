@@ -60,6 +60,8 @@ export const LogGetUserFinancialSummaryFailed =
   "get_user_financial_summary_failed";
 export const LogGetUserNetWorthCompositionFailed =
   "get_user_net_worth_composition_failed";
+export const LogGetCategoryTransactionsFailed =
+  "get_category_transactions_failed";
 export const LogInitialSyncFailed = "initial_sync_failed";
 export const LogInitialSyncCompleted = "initial_sync_completed";
 export const LogInitialSyncForbidden = "initial_sync_forbidden";

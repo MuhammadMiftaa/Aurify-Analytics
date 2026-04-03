@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import {
+  getCategoryTransactionsType,
   getUserBalanceType,
   getUserFinancialSummaryType,
   getUserNetWorthCompositionType,
@@ -15,6 +16,7 @@ import logger from "./utils/logger";
 import {
   AnalyticsService,
   LogGetUserTransactionFailed,
+  LogGetCategoryTransactionsFailed,
   LogGetUserBalanceFailed,
   LogGetUserFinancialSummaryFailed,
   LogGetUserNetWorthCompositionFailed,
@@ -41,6 +43,30 @@ const getUserTransaction = async (
       service: AnalyticsService,
       request_id: requestID,
       user_id: req.user?.id,
+      error: error.message,
+    });
+    next(error);
+  }
+};
+
+const getCategoryTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const requestID = req.requestID;
+
+  try {
+    const data: getCategoryTransactionsType = req.body;
+    const categoryTransactions = await service.getCategoryTransactions(data);
+    // Read-only — no success log needed; middleware access log is sufficient
+    res.json(categoryTransactions);
+  } catch (error: any) {
+    logger.error(LogGetCategoryTransactionsFailed, {
+      service: AnalyticsService,
+      request_id: requestID,
+      user_id: req.user?.id,
+      category_id: req.body?.categoryID,
       error: error.message,
     });
     next(error);
@@ -140,7 +166,7 @@ const initialSyncHandler = async (
       (await req.app.locals.transactionGRPCClient.getTransactions()) as transactionType[];
     const investments =
       (await req.app.locals.investmentGRPCClient.getInvestments()) as investmentType[];
-    
+
     await initialSync(wallets, transactions, investments);
 
     logger.info(LogInitialSyncCompleted, {
@@ -163,6 +189,7 @@ const initialSyncHandler = async (
 
 export default {
   getUserTransaction,
+  getCategoryTransactions,
   getUserBalance,
   getUserFinancialSummary,
   getUserNetWorthComposition,

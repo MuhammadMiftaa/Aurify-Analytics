@@ -1,4 +1,5 @@
 import {
+  getCategoryTransactionsType,
   getUserBalanceType,
   getUserFinancialSummaryType,
   getUserNetWorthCompositionType,
@@ -66,6 +67,7 @@ const getUserTransaction = async (data: getUserTransactionType) => {
           CategoryID: "$CategoryID",
           CategoryName: "$CategoryName",
           CategoryType: "$CategoryType",
+          ParentCategoryName: "$ParentCategoryName",
         },
         TotalAmount: { $sum: "$TotalAmount" },
         TotalTransactions: { $sum: "$TransactionCount" },
@@ -82,6 +84,7 @@ const getUserTransaction = async (data: getUserTransactionType) => {
         CategoryID: "$_id.CategoryID",
         CategoryName: "$_id.CategoryName",
         CategoryType: "$_id.CategoryType",
+        ParentCategoryName: "$_id.ParentCategoryName",
         TotalAmount: 1,
         TotalTransactions: 1,
       },
@@ -89,6 +92,108 @@ const getUserTransaction = async (data: getUserTransactionType) => {
   ]);
 
   return result;
+};
+
+const getCategoryTransactions = async (data: getCategoryTransactionsType) => {
+  const { userID, categoryID, walletID, dateOption } = data;
+  const { date, year, month, day, range } = dateOption;
+
+  // Build match conditions
+  const matchConditions: any = { UserID: userID, CategoryID: categoryID };
+
+  //= WALLET FILTERING
+  if (walletID) {
+    matchConditions.WalletID = walletID;
+  }
+
+  //= DATE FILTERING - Priority order
+  // 1. EXACT DATE (highest priority)
+  if (date) {
+    matchConditions.Date = date;
+  }
+  // 2. DATE RANGE
+  else if (range?.start && range?.end) {
+    matchConditions.Date = {
+      $gte: range.start,
+      $lte: range.end,
+    };
+  }
+  // 3. YEAR + MONTH + DAY
+  else if (year && month && day) {
+    matchConditions.Year = year;
+    matchConditions.Month = month;
+    matchConditions.Day = day;
+  }
+  // 4. YEAR + MONTH
+  else if (year && month) {
+    matchConditions.Year = year;
+    matchConditions.Month = month;
+  }
+  // 5. YEAR ONLY
+  else if (year) {
+    matchConditions.Year = year;
+  }
+  // 6. NO DATE FILTER = ALL TIME
+
+  // Get category info and all transactions
+  const result = await userTransactionModel.aggregate([
+    { $match: matchConditions },
+    {
+      $group: {
+        _id: {
+          CategoryID: "$CategoryID",
+          CategoryName: "$CategoryName",
+          CategoryType: "$CategoryType",
+          ParentCategoryName: "$ParentCategoryName",
+        },
+        Transactions: {
+          $push: {
+            $map: {
+              input: "$Transactions",
+              as: "tx",
+              in: {
+                TransactionID: "$$tx.ID",
+                Description: "$$tx.Description",
+                TransactionDate: "$$tx.Date",
+                Amount: "$$tx.Amount",
+                WalletName: "$WalletName",
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        CategoryID: "$_id.CategoryID",
+        CategoryName: "$_id.CategoryName",
+        CategoryType: "$_id.CategoryType",
+        ParentCategoryName: "$_id.ParentCategoryName",
+        Transactions: {
+          $reduce: {
+            input: "$Transactions",
+            initialValue: [],
+            in: { $concatArrays: ["$$value", "$$this"] },
+          },
+        },
+      },
+    },
+  ]);
+
+  if (result.length === 0) {
+    return null;
+  }
+
+  // Sort transactions by date descending
+  const categoryData = result[0];
+  categoryData.Transactions.sort(
+    (a: any, b: any) =>
+      new Date(b.TransactionDate).getTime() -
+      new Date(a.TransactionDate).getTime(),
+  );
+
+  return categoryData;
 };
 
 const getUserBalance = async (data: getUserBalanceType) => {
@@ -343,6 +448,7 @@ const getUserNetWorthComposition = async (
 
 export default {
   getUserTransaction,
+  getCategoryTransactions,
   getUserBalance,
   getUserFinancialSummary,
   getUserNetWorthComposition,

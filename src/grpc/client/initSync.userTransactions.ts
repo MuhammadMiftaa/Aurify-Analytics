@@ -29,6 +29,7 @@ export function groupTransactionsByUserWalletCategoryDate(
         CategoryID: tx.category_id,
         CategoryName: tx.category_name,
         CategoryType: tx.category_type,
+        ParentCategoryName: tx.parent_category_name || "",
         Date: new Date(dateKey),
         Year: txDate.getFullYear(),
         Month: txDate.getMonth() + 1,
@@ -47,6 +48,7 @@ export function groupTransactionsByUserWalletCategoryDate(
       ID: tx.id,
       Description: tx.description,
       Date: tx.transaction_date,
+      Amount: tx.amount,
     });
   });
 

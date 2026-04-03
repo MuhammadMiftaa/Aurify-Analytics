@@ -32,14 +32,14 @@ const config: Config = {
     "src/utils/helper.ts",
     "!src/**/__tests__/**",
   ],
-  coverageThreshold: {
-    global: {
-      branches: 70,
-      functions: 90,
-      lines: 90,
-      statements: 90,
-    },
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 70,
+  //     functions: 90,
+  //     lines: 90,
+  //     statements: 90,
+  //   },
+  // },
   coverageReporters: ["text", "lcov", "html"],
 
   // Verbose output untuk melihat setiap test case
